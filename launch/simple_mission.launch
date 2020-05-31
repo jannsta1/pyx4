@@ -1,0 +1,41 @@
+<launch>
+
+    <arg name="gui" default="true"/>
+    <arg name="world" default="flat.world"/>
+    <arg name="vehicle" default="iris"/>
+
+    <arg name="mission_type" default="ortho"/>
+    <arg name="control_type" default="pos"/>
+    <arg name="duration" default="10"/>
+    <arg name="altitude" default="5"/>
+    <arg name="vel_cap" default="5"/>
+    <arg name="x" default="5"/>
+    <arg name="y" default="5"/>
+    <arg name="z" default="5"/>
+    <arg name="heading" default="5"/>
+
+    PX4 MAVROS NODE
+    <include file="$(find px4)/launch/mavros_posix_sitl.launch">
+        <arg name="world" default="$(arg world)"/>
+        <arg name="verbose" value="true"/>
+        <arg name="vehicle" value="$(arg vehicle)"/>
+        <arg name="interactive" value="false"/>
+        <arg name="respawn_mavros" value="false"/>
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    Pyx4_node
+    <node pkg="lfdrone" type="parametised_missions.py" name="optic_flow" output="screen"
+        args="
+                --mission_type $(arg mission_type)
+                --control_type $(arg control_type)
+                --duration $(arg duration)
+                --vel_cap $(arg vel_cap)
+                --x_tgt $(arg x)
+                --y_tgt $(arg y)
+                --z_tgt $(arg z)
+                --heading $(arg heading)
+          "
+    />
+
+</launch>

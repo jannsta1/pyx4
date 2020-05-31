@@ -1,0 +1,6 @@
+instruction_type,instruction_args,timeout,xy_type,x_setpoint,y_setpoint,z_type,z_setpoint,yaw_type,yaw_setpoint,coordinate_frame
+hold,,5,pos,0,0,pos,0,pos,0,1
+take_off,{'to_altitude_tgt':10.0},10
+hold,,5,pos,3,3,pos,3,pos,0,1
+land,,20
+
