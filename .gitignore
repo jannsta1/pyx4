@@ -1,6 +1,6 @@
 # Created by .ignore support plugin (hsz.mobi)
 *.pyc
-data/images/lf_save_files
+src/pyx4_base/data/images/lf_save_files
 learning_flights/data/lf_images/last_run/
 
 src/learning_flights_pyeye/definitions_lf_pyeye_local.py

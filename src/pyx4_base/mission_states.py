@@ -17,9 +17,9 @@ from mavros_msgs.msg import PositionTarget
 from mavros_msgs.msg import ExtendedState
 from sensor_msgs.msg import NavSatFix
 
-from pyx4_src.definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
-from pyx4_src.setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
-from pyx4_src.utils import get_bitmask
+from definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
+from setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
+from utils import get_bitmask
 
 
 class Generic_mission_state(object):

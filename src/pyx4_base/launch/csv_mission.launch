@@ -17,7 +17,7 @@
     </include>
 
     Pyx4_node
-    <node pkg="lfdrone" type="csv_mission.py" name="csv_mission" output="screen"
+    <node pkg="pyx4" type="csv_mission.py" name="csv_mission" output="screen"
         args="--csv $(arg csv)"
     />
 

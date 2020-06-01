@@ -142,7 +142,7 @@ class Commander(object):
 
                 if not self.end_of_flight_instructions:
                     # if our mission index is incremented - handled here if wpt, hold or timeout, elsewhere if another mission type
-                    # usually this means the pyx4 class has been inherited by another class
+                    # usually this means the pyx4_base class has been inherited by another class
 
                     # rospy.logwarn_throttle(1, ('commander heartbeat. In state {} which is mission idx {}'.format(self._flight_instruction.flight_instruction_type, self.mission_idx)))
                     # if self.mission_idx > self.mission_idx_previous:

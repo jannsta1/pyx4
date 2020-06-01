@@ -11,9 +11,9 @@ import argparse
 import os, sys
 import rospy
 
-from pyx4_src.generate_mission import Wpts_from_csv
-from pyx4_src.definitions_pyx4 import MISSION_SPECS
-from pyx4_src.pyx4 import Pyx4
+from generate_mission import Wpts_from_csv
+from definitions_pyx4 import MISSION_SPECS
+from pyx4 import Pyx4
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ import ast
 import argparse
 
 from mission_states import *
-from pyx4 import Pyx4
+from src.src.pyx4 import Pyx4
 from mavros_msgs.msg import PositionTarget
 
 from warnings import warn

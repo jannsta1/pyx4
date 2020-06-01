@@ -496,7 +496,7 @@ class Pyx4_deprecated(object):
 
             if not self.end_of_flight_instructions:
                 # if our mission index is incremented - handled here if wpt, hold or timeout, elsewhere if another mission type
-                # usually this means the pyx4 class has been inherited by another class
+                # usually this means the pyx4_base class has been inherited by another class
                 if self.mission_idx > self.mission_idx_previous:
                     self.invoke_instruction()
 
@@ -773,7 +773,7 @@ class Pyx4_deprecated(object):
                     # todo - set some default behaviour here? e.g. send home position
                     break
                 elif self.wd_initialised:
-                    rospy.loginfo_throttle(30, 'pyx4 program heart beat')
+                    rospy.loginfo_throttle(30, 'pyx4_base program heart beat')
                     try:
                         rate.sleep()
                     except rospy.ROSException as e:
@@ -827,7 +827,7 @@ if __name__ == '__main__':
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
 
     # todo - add arg parse to facilitate inputting different missions from the command line
-    # pyx4 = Pyx4_deprecated(mission_file_path=EXAMPLE_MISSION, sem=State_estimation_method.GPS)
+    # pyx4_base = Pyx4_deprecated(mission_file_path=EXAMPLE_MISSION, sem=State_estimation_method.GPS)
     pyx4 = Pyx4_deprecated(mission_file_path=var2mission_filepath(args.mission_file),
                            sem=State_estimation_method[args.state_estimation_type.upper()])
     pyx4.run()

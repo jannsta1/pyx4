@@ -41,7 +41,7 @@ class Pyx4(object):
         self.height_mode_req = height_mode_req
         self.start_authorised = start_authorised
 
-        # create pyx4 state publisher
+        # create pyx4_base state publisher
         self.pyx4_state_msg_pub = rospy.Publisher(node_name + '/pyx4_state', Pyx4_msg, queue_size=5)
         self.pyx4_state_msg = Pyx4_msg()
         self.pyx4_state_msg.flight_state = 'Not_set'
@@ -69,7 +69,7 @@ class Pyx4(object):
         # initialise the watchdog and wait until
         wait_for_watchdog_rate = rospy.Rate(1)
         while not rospy.is_shutdown() and not self.mavros_interface.wd_initialised:
-            rospy.loginfo('[pyx4_v2]: Waiting for the pyx4 watchdog to inilialise')
+            rospy.loginfo('[pyx4_v2]: Waiting for the pyx4_base watchdog to inilialise')
             # todo - report what is preventing watchdog from completing
             wait_for_watchdog_rate.sleep()
         rospy.loginfo('Pyx4_deprecated watchdog initialised')
@@ -103,7 +103,7 @@ class Pyx4(object):
 
     def do_delayed_start(self):
         """
-        provides a mechanism for pyx4 to initialise (and start mavros) without starting the commander threads
+        provides a mechanism for pyx4_base to initialise (and start mavros) without starting the commander threads
         handy if other preconditions need to be waited for before starting the mission
 
         """

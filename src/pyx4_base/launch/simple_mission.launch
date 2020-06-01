@@ -25,7 +25,7 @@
     </include>
 
     Pyx4_node
-    <node pkg="lfdrone" type="parametised_missions.py" name="optic_flow" output="screen"
+    <node pkg="pyx4" type="parametised_missions.py" name="optic_flow" output="screen"
         args="
                 --mission_type $(arg mission_type)
                 --control_type $(arg control_type)

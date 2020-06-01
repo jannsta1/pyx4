@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(lfdrone)
+project(pyx4)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -108,7 +108,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES lfdrone
+#  LIBRARIES pyx4
    CATKIN_DEPENDS roscpp rospy std_msgs message_runtime geometry_msgs
 #  DEPENDS system_lib
 )
@@ -126,7 +126,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/lfdrone.cpp
+#   src/${PROJECT_NAME}/pyx4.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,7 +137,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/lfdrone_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/pyx4_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -164,8 +164,12 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 install(PROGRAMS
-   src/pyx4_src/__init__.py
-   src/pyx4_src/pyx4_deprecated.py
+   src/pyx4_base/__init__.py
+   src/pyx4_base/pyx4_deprecated.py
+   src/pyx4_base/definitions_pyx4.py
+   src/pyx4_base/pyx4.py
+   src/pyx4_base/generate_mission.py
+   src/pyx4_base/setpoint_bitmasks.py
    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -195,7 +199,7 @@ install(PROGRAMS
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_lfdrone.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_pyx4.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
@@ -205,8 +209,8 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS "${GAZEBO_CXX_FLAGS}")
 
 # For tc_simple_world_plugin plugin
-add_library(gazebo_plugin_ground_truth src/gazebo_plugin_ground_truth.cpp)
-target_link_libraries(gazebo_plugin_ground_truth ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
+# add_library(gazebo_plugin_ground_truth src/gazebo_plugin_ground_truth.cpp)
+# target_link_libraries(gazebo_plugin_ground_truth ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
