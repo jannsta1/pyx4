@@ -136,7 +136,6 @@ class Commander(object):
             # check if we need to increment our mission:
             # + instruction timeout?
             # + instruction completed?
-            # +
 
             if not self.mission_fail_state:
 
@@ -153,7 +152,7 @@ class Commander(object):
                     if self.waypoint_timeout_flag:
 
                         # todo - requirement here is to shut nodes down if they didn't succeed - sometimes this could be
-                        # due to timing out but sometimes timing out is OK
+                        #  due to timing out but sometimes timing out is OK
                         if not self._flight_instruction.timeout_OK:
                             rospy.logerr("couldn't initialise state {}".format(self._flight_instruction.flight_instruction_type))
                             self.shut_node_down()
