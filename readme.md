@@ -1,9 +1,11 @@
 # Purpose
 This package enables the control of an autonomous aerial vehicle (UAV) that uses [pixhawk](https://pixhawk.org/) hardware as a flight control unit (FCU).
 It has been developed with the [PX4](https://px4.io/) flight stack in mind.
+The original purpose was for simulating insect inspired behaviours, traditional waypoints can be combined with more complex "behaviours". 
 It is intended for use with projects that make use of a companion computer. Some key features are:
+* Extends PX4 ROS/GAZEBO simulation or can be run on a companion computer.
 * Built using ROS middleware - therefore provides an easy interfaces to other robotics packages.
-* No need to modify code in the flight control system - therefore no risk of affecting a vehicle's stability.
+* No need to modify code in the FCU - therefore no risk of affecting the target vehicle's stability and no need to rebuild Firmware for each update.
 * Built with python  
 
 # Installation (for Ubuntu OS)
@@ -17,7 +19,7 @@ It is intended for use with projects that make use of a companion computer. Some
 ## Setting up the ROS workspace
 
 If you want to setup a new ROS workspace for this project (recommended) then follow the steps at http://wiki.ros.org/catkin/Tutorials/create_a_workspace. 
-An example is outlined in this section.
+An adapted example of this process is outlined in this section (change "kinetic" to your ROS installation).
 
 First, open a terminal and (if not already done) source the main ROS installation 
 
@@ -28,7 +30,7 @@ Now create an area for your installation, for example:
 ```
 $ mkdir -p ~/ros_workspaces/pyx4_ws/src
 ```
-Change directories to your workspace and clone the pyx4 repo, for example (or use ssh):
+Change directories to your workspace and clone the pyx4 repo, for example:
 ```
 $ cd ~/ros_workspaces/pyx4_ws/src
 $ git clone https://github.com/jannsta1/pyx4
@@ -37,7 +39,7 @@ $ git clone https://github.com/jannsta1/pyx4
 Change directories to your workspace and build.
 ```
 $ cd ~/ros_workspaces/pyx4_ws/
-$ catkin_make
+$ catkin build
 ```
 
 
@@ -90,6 +92,18 @@ $ roslaunch pyx4 simple_mission.launch world:=empty.world
 The default aircraft should takeoff and then follow some positional setpoints before returning to the origin and landing.
 
 
-# Using .csv mission description
+## Using .csv mission description
+There are multiple ways to specify missions in pyx4. 
+A simple way to get up and running is to use the CSV mission loader approach.
+Using the templates found in pyx4_base/data/mission_specs, a sequence of position or velocity waypoints can be set for each control axis.
+
+Once a mission has been specified in this fashion, it can be performed using the associated roslaunch file:
+```
+roslaunch pyx4 csv_mission.launch csv:=YOUR_MISSION_FILE.csv
+``` 
+
 - instruction_args can be passed. This is useful for sending unspecified parameters to a custom flight state. 
-The arguments should be formatted like a dictionary but with semicolons to divide entries e.g. {speed:2 ; z_tgt:3.0}  
+The arguments should be formatted like a dictionary but with semicolons to divide entries e.g. {speed:2 ; z_tgt:3.0}
+
+# Concepts
+todo  
