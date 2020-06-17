@@ -67,7 +67,7 @@ function setpx4() {
     current_dir="$PWD"
     build_ref=px4_sitl_default               
     
-    cd ~/ros_workspaces/pixhawk_ws           # point this to your ROS pyx4 project
+    cd ~/ros_workspaces/pixhawk_ws           # point this to your ROS pyx4 project workspace
     source devel/setup.bash
 
     cd ${PX4_SRC_DIR}

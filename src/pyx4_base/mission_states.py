@@ -510,7 +510,6 @@ class Take_off_state(Generic_mission_state):
     def precondition_check(self):
 
         # check we are landed
-        # if self.extended_state_ref == mavutil.mavlink.enums['MAV_LANDED_STATE']:
         # todo - if we are already airborne then passthrough this state
         # todo - if in gps mode then take an average of readings for the start x,y and z data?
 
@@ -642,7 +641,6 @@ class Arming_state(Generic_mission_state):
     def precondition_check(self):
 
         # check we are landed
-        # if self.extended_state_ref == mavutil.mavlink.enums['MAV_LANDED_STATE']:
         # todo - if we are already airborne/armed then passthrough this state
 
         self.mission_state_busy = True

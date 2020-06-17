@@ -10,23 +10,21 @@
 from __future__ import division
 
 import numpy as np
-from pymavlink import mavutil
 from threading import Thread, Lock
 import rospy
-import mavros
-import os
 import sys
-import argparse
 
 from mavros_msgs.msg import Altitude, ExtendedState, HomePosition, State, WaypointList, OpticalFlowRad, PositionTarget
 from mavros_msgs.srv import CommandBool, ParamGet, ParamSet, SetMode, WaypointClear, WaypointPush, CommandTOL, CommandHome
 from geometry_msgs.msg import PoseStamped, TwistStamped
 from nav_msgs.msg import Odometry
-from sensor_msgs.msg import NavSatFix, Image, CameraInfo, Range
+from sensor_msgs.msg import NavSatFix, Range
 from std_msgs.msg import Float64, Float32
 from tf.transformations import euler_from_quaternion
 
 from definitions_pyx4 import *
+
+from definitions_pyx4 import MAV_VTOL_STATE, LANDED_STATE, MAV_STATE
 
 
 class Mavros_interface(object):
@@ -230,15 +228,13 @@ class Mavros_interface(object):
     def extended_state_callback(self, data):
         if self.extended_state.vtol_state != data.vtol_state:
             rospy.loginfo("VTOL state changed from {0} to {1}".format(
-                mavutil.mavlink.enums['MAV_VTOL_STATE']
-                [self.extended_state.vtol_state].name, mavutil.mavlink.enums[
-                    'MAV_VTOL_STATE'][data.vtol_state].name))
+                MAV_VTOL_STATE(self.extended_state.vtol_state).name, MAV_VTOL_STATE(data.vtol_state).name))
+
 
         if self.extended_state.landed_state != data.landed_state:
             rospy.loginfo("landed state changed from {0} to {1}".format(
-                mavutil.mavlink.enums['MAV_LANDED_STATE']
-                [self.extended_state.landed_state].name, mavutil.mavlink.enums[
-                    'MAV_LANDED_STATE'][data.landed_state].name))
+                LANDED_STATE(self.extended_state.landed_state).name,  LANDED_STATE(data.landed_state).name))
+
         self.extended_state = data
 
 
@@ -297,9 +293,7 @@ class Mavros_interface(object):
 
         if self.state.system_status != data.system_status:
             rospy.loginfo("system_status changed from {0} to {1}".format(
-                mavutil.mavlink.enums['MAV_STATE'][
-                    self.state.system_status].name, mavutil.mavlink.enums[
-                    'MAV_STATE'][data.system_status].name))
+                MAV_STATE(self.state.system_status).name, MAV_STATE(data.system_status).name))
         self.state = data
 
 
