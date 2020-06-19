@@ -25,7 +25,7 @@ from utils import get_bitmask
 class Generic_mission_state(object):
     """ Base class for flight behaviours.
 
-    Pyx4 commander module handles timeout.
+    Pyx4_base commander module handles timeout.
 
     """
 

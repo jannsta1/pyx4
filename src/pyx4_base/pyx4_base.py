@@ -9,11 +9,11 @@ from mission_states import *
 from threading import Thread
 from commander import *
 
-from lfdrone.msg import pyx4_state as Pyx4_msg
+from pyx4.msg import pyx4_state as Pyx4_msg
 
 # todo - re-add state estimation options
 # todo - create a message that is published when the flight state changes
-class Pyx4(object):
+class Pyx4_base(object):
     """
     A class for controlling a px4 flight control unit via ROS (using the mavros package).
 
@@ -165,8 +165,8 @@ if __name__ == '__main__':
     # flight_instructions = Wpts_from_csv(file_path=mission_file)
 
 
-    pyx4 = Pyx4(flight_instructions=flight_instructions,
-                enforce_height_mode_flag=args.enforce_hgt_mode_flag,
-                height_mode_req=args.height_mode_req,
-                )
+    pyx4 = Pyx4_base(flight_instructions=flight_instructions,
+                     enforce_height_mode_flag=args.enforce_hgt_mode_flag,
+                     height_mode_req=args.height_mode_req,
+                     )
     pyx4.run()

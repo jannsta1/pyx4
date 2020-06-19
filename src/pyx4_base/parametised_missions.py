@@ -6,7 +6,7 @@ from __future__ import division
 import argparse
 
 from mission_states import *
-from pyx4 import Pyx4
+from pyx4_base import Pyx4_base
 
 
 VALID_MISSIONS = ['hover', 'baggins', 'ortho', 'holo']
@@ -413,6 +413,6 @@ if __name__ == '__main__':
 
     rospy.init_node('pyx4_parametised_node', anonymous=True, log_level=rospy.DEBUG)
 
-    pyx4 = Pyx4(flight_instructions=flight_instructions)
+    pyx4 = Pyx4_base(flight_instructions=flight_instructions)
     pyx4.run()
 

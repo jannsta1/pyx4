@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-This file converts waypoints_local.py into a rosnode and instantiates a Pyx4 mission with this data.
+This file converts waypoints_local.py into a rosnode and instantiates a Pyx4_base mission with this data.
 
 The file is seperate to help with debugging (i.e. we can test the logic in waypoints_local.py without any ROS libraries
 
@@ -13,7 +13,7 @@ import rospy
 
 from generate_mission import Wpts_from_csv
 from definitions_pyx4 import MISSION_SPECS
-from pyx4 import Pyx4
+from pyx4_base import Pyx4_base
 
 
 if __name__ == '__main__':
@@ -37,5 +37,5 @@ if __name__ == '__main__':
 
     flight_instructions = Wpts_from_csv(file_path=mission_file)
 
-    pyx4 = Pyx4(flight_instructions=flight_instructions)
+    pyx4 = Pyx4_base(flight_instructions=flight_instructions)
     pyx4.run()
