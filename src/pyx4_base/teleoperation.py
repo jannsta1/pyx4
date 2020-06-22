@@ -57,6 +57,8 @@ class Teleop_state(Generic_mission_state):
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
 
+        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
+
         self.preconditions_satisfied = True
 
 
@@ -71,9 +73,6 @@ class Teleop_state(Generic_mission_state):
         self.y_vel = data.y_setpoint
         self.z_vel = data.z_setpoint
         self.yaw_rate = data.yaw_setpoint
-
-
-
 
 
 def generate_telop_mission(args):
