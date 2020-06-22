@@ -12,7 +12,9 @@
     <arg name="x" default="5"/>
     <arg name="y" default="5"/>
     <arg name="z" default="5"/>
-    <arg name="heading" default="5"/>
+    <arg name="heading" default="0"/>
+
+    <arg name="bag" default="False"/>
 
     PX4 MAVROS NODE
     <include file="$(find px4)/launch/mavros_posix_sitl.launch">
@@ -37,5 +39,10 @@
                 --heading $(arg heading)
           "
     />
+
+    OPTION TO RECORD ALL ROS DATA
+    <group if="$(arg bag)">
+         <node pkg="rosbag" type="record" name="record" output="screen" args="-a"/>
+    </group>
 
 </launch>

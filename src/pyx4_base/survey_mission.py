@@ -8,7 +8,7 @@ import ast
 import argparse
 
 from mission_states import *
-from src.src.pyx4 import Pyx4
+from src.src.pyx4 import Pyx4_base
 from mavros_msgs.msg import PositionTarget
 
 from warnings import warn
@@ -182,6 +182,6 @@ if __name__ == '__main__':
 
     rospy.init_node('pyx4_survey_node', anonymous=True, log_level=rospy.DEBUG)
 
-    pyx4 = Pyx4(flight_instructions=flight_instructions)
+    pyx4 = Pyx4_base(flight_instructions=flight_instructions)
     pyx4.run()
     flight_instructions = Survey_mission()
