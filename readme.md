@@ -9,11 +9,13 @@ It is intended for use with projects that make use of a companion computer. Some
 * Built with python  
 
 # Installation (for Ubuntu OS)
-## Dependencies
-* Install the PX4 toolchain https://dev.px4.io/master/en/setup/dev_env.html
-* (if not achieved in the step above or otherwise) Install ROS supported by your operating system (must be ROS Kinetic or later) http://wiki.ros.org/ROS/Installation
-* (recommended)  Install catkin tools: https://catkin-tools.readthedocs.io/en/latest/installing.html
-* Install MAVROS - following the instructions (install as a debian package if possible) @ https://dev.px4.io/v1.9.0/en/ros/mavros_installation.html
+## Install Dependencies
+
+1. Install ROS Melodic (desktop full version): [http://wiki.ros.org/melodic/Installation](http://wiki.ros.org/melodic/Installation)
+2. Install the PX4 Firmware: [https://dev.px4.io/master/en/setup/dev_env_linux_ubuntu.html#sim_nuttx](https://dev.px4.io/master/en/setup/dev_env_linux_ubuntu.html#sim_nuttx)
+3. Build the PX4 Firmware: [https://dev.px4.io/v1.9.0/en/simulation/ros_interface.html#launching-gazebo-with-ros-wrappers](https://dev.px4.io/v1.9.0/en/simulation/ros_interface.html#launching-gazebo-with-ros-wrappers)
+4. Install catkin tools: [https://catkin-tools.readthedocs.io/en/latest/installing.html#installing-on-ubuntu-with-apt-get](https://catkin-tools.readthedocs.io/en/latest/installing.html#installing-on-ubuntu-with-apt-get)
+5. Install mavros and mavros extras: [https://dev.px4.io/v1.9.0/en/ros/mavros_installation.html#installation](https://dev.px4.io/v1.9.0/en/ros/mavros_installation.html#installation)
 
 
 ## Setting up the ROS workspace
@@ -24,7 +26,7 @@ An adapted example of this process is outlined in this section (change "kinetic"
 First, open a terminal and (if not already done) source the main ROS installation 
 
 ```
-source /opt/ros/kinetic/setup.bash
+source /opt/ros/{{ros-version}}/setup.bash
 ```
 Now create an area for your installation, for example:
 ```
@@ -57,7 +59,7 @@ export GCS_URL="127.0.0.1"                  # or "udp://:14570@localhost:14550"
 
 # adds the gazebo libraries (adapt to where you installed gazebo)
 export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:~/.gazebo/models
-export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH:~/.gazebo/worlds:/usr/share/gazebo-7
+export GAZEBO_RESOURCE_PATH=$GAZEBO_RESOURCE_PATH:~/.gazebo/worlds:/usr/share/gazebo-7  # Change to gazebo 9 if applicable
 
 # function to set ROS/PX4 environmental variables
 function setpx4() {
@@ -82,6 +84,24 @@ function setpx4() {
 setpx4                       # comment out if you don't want setpx4 to run automatically
 
 ```
+## Troubleshooting
+
+#### ` [Err] [REST.cc:205] Error in REST request`
+
+```
+nano .ignition/fuel/config.yaml
+```
+
+- Change `url: https://api.ignitionfuel.org` to `url: https://api.ignitionrobotics.org`
+
+- Run `source ~/.bashrc`
+
+### `[Err] [Server.cc:379] Could not open file[empty.world]` when running with `world:=empty.world`
+
+- Check if `/home/user/path-to-Firmware/Firmware/Tools/sitl_gazebo/worlds` exists.
+- If so, find the line `export GAZEBO_RESOURCE_PATH` and add: `~/Firmware/Tools/sitl_gazebo/worlds`
+- Run `source ~/.bashrc`
+
 
 # First steps
 ## Testing installation
