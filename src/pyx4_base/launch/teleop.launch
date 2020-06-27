@@ -5,7 +5,7 @@
     <arg name="vehicle" default="iris"/>
 
     <arg name="timeout" default="30"/>
-
+    
 
 
     PX4 MAVROS NODE
@@ -24,5 +24,7 @@
                 --timeout $(arg timeout)
           "
     />
+
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"/ output="screen">
 
 </launch>

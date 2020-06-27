@@ -10,6 +10,7 @@ from definitions_pyx4 import MISSION_SPECS
 from setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
 from mission_states import *
 from pyx4_base import Pyx4_base
+from geometry_msgs.msg import Twist
 
 
 
@@ -22,7 +23,7 @@ class Teleop_state(Generic_mission_state):
     def __init__(self,
                  flight_instruction_type='Teleoperation',
                  state_label='generic teleop',                 # waypoint state labels are mandatory
-                 timeout=30,
+                 timeout=60,
                  mavros_message_node=None,
                  parent_ref=None,
                  **kwargs
@@ -40,8 +41,10 @@ class Teleop_state(Generic_mission_state):
 
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
+#        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
 
-        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
+        self.state_sub = rospy.Subscriber('/cmd_vel', Twist, self.teleop_node_cb)
+
 
     def precondition_check(self):
         ''' This function can be run by substates in order - this will be executed (in places of step)
@@ -57,7 +60,8 @@ class Teleop_state(Generic_mission_state):
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
 
-        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
+        #        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
+ #       self.state_sub = rospy.Subscriber('/turtle1/cmd_vel', Twist, self.teleop_node_cb)
 
         self.preconditions_satisfied = True
 
@@ -68,11 +72,10 @@ class Teleop_state(Generic_mission_state):
         rospy.loginfo_throttle(5, 'In teleop mode')
 
     def teleop_node_cb(self, data):
-
-        self.x_vel = data.x_setpoint
-        self.y_vel = data.y_setpoint
-        self.z_vel = data.z_setpoint
-        self.yaw_rate = data.yaw_setpoint
+        self.x_vel = data.linear.x
+        self.y_vel = data.linear.y
+        self.z_vel = data.linear.z
+        self.yaw_rate = data.angular.z
 
 
 def generate_telop_mission(args):

@@ -125,5 +125,43 @@ roslaunch pyx4 csv_mission.launch csv:=YOUR_MISSION_FILE.csv
 - instruction_args can be passed. This is useful for sending unspecified parameters to a custom flight state. 
 The arguments should be formatted like a dictionary but with semicolons to divide entries e.g. {speed:2 ; z_tgt:3.0}
 
+# Teleoperation
+
+Node to teleoperate the drone using keyboard inputs.
+
+## Dependencies
+
+Uses the [teleop_twist_keyboard](http://wiki.ros.org/teleop_twist_keyboard) node to take keyboard input. 
+
+To install: 
+```
+sudo apt-get install ros-{{distro}}-teleop-twist-keyboard
+```
+
+## Usage
+
+```
+roslaunch pyx4 teleop.launch
+```
+
+And to use keyboard input:
+```
+Reading from the keyboard  and Publishing to Twist!
+---------------------------
+Moving around:
+   u    i    o
+   j    k    l
+   m    ,    .
+
+q/z : increase/decrease max speeds by 10%
+w/x : increase/decrease only linear speed by 10%
+e/c : increase/decrease only angular speed by 10%
+anything else : stop
+```
+
+## TODO
+- Better console output
+- Fix coordinate frame?
+
 # Concepts
 todo  
