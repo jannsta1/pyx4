@@ -5,6 +5,8 @@
     <arg name="vehicle" default="iris"/>
 
     <arg name="timeout" default="30"/>
+    <arg name="linear" default="4"/>
+    <arg name="angular" default="2"/>
     
 
 
@@ -23,10 +25,14 @@
         args="
                --timeout $(arg timeout)
           "
-    />
-
+        />
+    
     <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"
-          output="screen"
-          args="--timeout $(arg timeout)"/>
+          args="
+                --timeout $(arg timeout)
+                --linear $(arg linear)
+                --angular $(arg angular)
+                "
+          />
 
 </launch>
