@@ -38,7 +38,9 @@ class Teleop_state(Generic_mission_state):
                                         )  # sub and super class args
 
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
-        self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
+        # Using a body coordinate frame
+        # It is easier to control with the keyboard
+        self.coordinate_frame = PositionTarget.FRAME_BODY_NED
 
         self.state_sub = rospy.Subscriber('/cmd_vel', Twist, self.teleop_node_cb)
 
@@ -56,7 +58,7 @@ class Teleop_state(Generic_mission_state):
         self.z_vel = 0.
         self.yaw_rate = 0.
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
-        self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
+        self.coordinate_frame = PositionTarget.FRAME_BODY_NED
 
         self.preconditions_satisfied = True
 
@@ -67,8 +69,9 @@ class Teleop_state(Generic_mission_state):
         rospy.loginfo_throttle(5, 'In teleop mode')
 
     def teleop_node_cb(self, data):
-        self.x_vel = data.linear.x
-        self.y_vel = data.linear.y
+        # So that the movement is forward
+        self.x_vel = data.linear.y
+        self.y_vel = data.linear.x
         self.z_vel = data.linear.z
         self.yaw_rate = data.angular.z
 
