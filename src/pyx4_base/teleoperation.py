@@ -12,17 +12,16 @@ from mission_states import *
 from pyx4_base import Pyx4_base
 from geometry_msgs.msg import Twist
 
-
-
 class Teleop_state(Generic_mission_state):
     """
-    A mission state that takes the aircraft's current local position and holds it for a specified amount of time
-
+    A mission state that takes the aircraft's current local position and
+    holds it for a specified amount of time
     """
 
     def __init__(self,
                  flight_instruction_type='Teleoperation',
-                 state_label='generic teleop',                 # waypoint state labels are mandatory
+                 # waypoint state labels are mandatory
+                 state_label='generic teleop',
                  timeout=60,
                  mavros_message_node=None,
                  parent_ref=None,
@@ -41,7 +40,6 @@ class Teleop_state(Generic_mission_state):
 
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
-#        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
 
         self.state_sub = rospy.Subscriber('/cmd_vel', Twist, self.teleop_node_cb)
 
@@ -59,9 +57,6 @@ class Teleop_state(Generic_mission_state):
         self.yaw_rate = 0.
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
-
-        #        self.state_sub = rospy.Subscriber('teleop_node/topic_name', PositionTarget, self.teleop_node_cb)
- #       self.state_sub = rospy.Subscriber('/turtle1/cmd_vel', Twist, self.teleop_node_cb)
 
         self.preconditions_satisfied = True
 
