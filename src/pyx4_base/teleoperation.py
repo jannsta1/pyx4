@@ -37,7 +37,6 @@ class Teleop_state(Generic_mission_state):
                                         **kwargs
                                         )  # sub and super class args
 
-
         self.type_mask = MASK_XY_VEL__Z_POS__YAW_RATE
         self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
 
@@ -45,7 +44,8 @@ class Teleop_state(Generic_mission_state):
 
 
     def precondition_check(self):
-        ''' This function can be run by substates in order - this will be executed (in places of step)
+        ''' This function can be run by substates in order -
+        this will be executed (in places of step)
         until self.preconditions_satisfied == True
         '''
 
@@ -85,7 +85,7 @@ def generate_telop_mission(args):
     instructions[instruction_cnt] = Take_off_state()
     instruction_cnt += 1
 
-    instructions[instruction_cnt] = Teleop_state()
+    instructions[instruction_cnt] = Teleop_state(timeout=args.timeout)
     instruction_cnt += 1
 
     instructions[instruction_cnt] = Landing_state()
@@ -100,9 +100,9 @@ if __name__ == '__main__':
 
     rospy.init_node(node_name, anonymous=True, log_level=rospy.DEBUG)
     parser = argparse.ArgumentParser(description="Teleoperation px4 quadcopter.")
+    # This is obtained from the launch file.
     parser.add_argument('-t', '--timeout', type=float, default=30)
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
-
     flight_instructions = generate_telop_mission(args)
 
     pyx4 = Pyx4_base(flight_instructions=flight_instructions)

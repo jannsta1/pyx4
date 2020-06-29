@@ -21,10 +21,12 @@
     Pyx4_node
     <node pkg="pyx4" type="teleoperation.py" name="teleop" output="screen"
         args="
-                --timeout $(arg timeout)
+               --timeout $(arg timeout)
           "
     />
 
-    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"/ output="screen">
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"
+          output="screen"
+          args="--timeout $(arg timeout)"/>
 
 </launch>
