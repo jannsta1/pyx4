@@ -66,13 +66,15 @@ class Teleop_state(Generic_mission_state):
     def step(self):
 
         # self.type_mask = MASK_XY_POS__Z_POS_YAW_POS
-        rospy.loginfo_throttle(5, 'In teleop mode')
+        # Trying to log the altitude
+        rospy.loginfo_throttle(5, 'In teleop mode. Altitude: {}'.format(self.z))
 
     def teleop_node_cb(self, data):
         # So that the movement is forward
         self.x_vel = data.linear.y
         self.y_vel = data.linear.x
-        self.z_vel = data.linear.z
+        if self.z < 100:  # This is just to try
+            self.z_vel = data.linear.z
         self.yaw_rate = data.angular.z
 
 
