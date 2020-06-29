@@ -5,7 +5,11 @@
     <arg name="vehicle" default="iris"/>
 
     <arg name="timeout" default="30"/>
-
+    <arg name="linear" default="4"/>
+    <arg name="angular" default="2"/>
+    <arg name="z_min" default="0"/>
+    <arg name="z_max" default="10"/>
+    
 
 
     PX4 MAVROS NODE
@@ -21,8 +25,18 @@
     Pyx4_node
     <node pkg="pyx4" type="teleoperation.py" name="teleop" output="screen"
         args="
-                --timeout $(arg timeout)
+               --timeout $(arg timeout)
           "
-    />
+        />
+    
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"
+          args="
+                --timeout $(arg timeout)
+                --linear $(arg linear)
+                --angular $(arg angular)
+                --z_min $(arg z_min)
+                --z_max $(arg z_max)
+                "
+          />
 
 </launch>
