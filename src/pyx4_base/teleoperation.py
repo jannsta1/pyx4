@@ -25,6 +25,8 @@ class Teleop_state(Generic_mission_state):
                  timeout=60,
                  max_linear_speed=4,
                  max_angular_speed=2,
+                 z_min=0,
+                 z_max=10,
                  mavros_message_node=None,
                  parent_ref=None,
                  **kwargs
@@ -46,6 +48,7 @@ class Teleop_state(Generic_mission_state):
 
         self.max_linear_speed = max_linear_speed
         self.max_angular_speed = max_angular_speed
+        self.z_min, self.z_max = z_min, z_max
         self.state_sub = rospy.Subscriber('/cmd_vel', Twist, self.teleop_node_cb)
 
 
@@ -71,7 +74,7 @@ class Teleop_state(Generic_mission_state):
 
         # self.type_mask = MASK_XY_POS__Z_POS_YAW_POS
         # Trying to log the altitude
-        rospy.loginfo_throttle(5, 'In teleop mode. Altitude: {}'.format(self.z))
+        rospy.loginfo_throttle(5, 'In teleop mode. Altitude: {}'.format(self._parent_ref.mavros_interface.local_z))
 
     def _check_speeds(self, data):
         for ax in ['x', 'y', 'z']:
@@ -86,14 +89,12 @@ class Teleop_state(Generic_mission_state):
         return data
         
     def teleop_node_cb(self, data):
-        # So that the movement is forward
-        print self.max_angular_speed
         checked_data = self._check_speeds(data)
-        
+        # So that the movement is forward
         self.x_vel = checked_data.linear.y
         self.y_vel = checked_data.linear.x
-        if self.z < 100:  # This is just to try
-            self.z_vel = checked_data.linear.z
+        self.z = np.clip(self.z + 0.5 * np.sign(checked_data.linear.z),
+                         self.z_min, self.z_max)
         self.yaw_rate = checked_data.angular.z
 
 
@@ -112,7 +113,9 @@ def generate_telop_mission(args):
     print('args', args)
     instructions[instruction_cnt] = Teleop_state(timeout=args.timeout,
                                                  max_linear_speed=args.linear,
-                                                 max_angular_speed=args.angular)
+                                                 max_angular_speed=args.angular,
+                                                 z_min=args.z_min,
+                                                 z_max=args.z_max)
     instruction_cnt += 1
 
     instructions[instruction_cnt] = Landing_state()
@@ -131,6 +134,8 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--timeout', type=float, default=30)
     parser.add_argument('-l', '--linear', type=float, default=4)
     parser.add_argument('-a', '--angular', type=float, default=2)
+    parser.add_argument('-m', '--z_min', type=float, default=0)
+    parser.add_argument('-M', '--z_max', type=float, default=10)
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
     flight_instructions = generate_telop_mission(args)
 

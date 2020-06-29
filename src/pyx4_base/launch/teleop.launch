@@ -7,6 +7,8 @@
     <arg name="timeout" default="30"/>
     <arg name="linear" default="4"/>
     <arg name="angular" default="2"/>
+    <arg name="z_min" default="0"/>
+    <arg name="z_max" default="10"/>
     
 
 
@@ -32,6 +34,8 @@
                 --timeout $(arg timeout)
                 --linear $(arg linear)
                 --angular $(arg angular)
+                --z_min $(arg z_min)
+                --z_max $(arg z_max)
                 "
           />
 
