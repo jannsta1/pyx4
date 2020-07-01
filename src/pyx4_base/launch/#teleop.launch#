@@ -1,0 +1,40 @@
+<launch>
+
+    <arg name="gui" default="true"/>
+    <arg name="world" default="flat.world"/>
+    <arg name="vehicle" default="iris"/>
+
+    <arg name="timeout" default="30"/>
+    <arg name="linear" default="4"/>
+    <arg name="angular" default="2"/>
+    <arg name="z_min" default="0"/>
+    <arg name="z_max" default="10"/>
+    
+
+
+    PX4 MAVROS NODE
+    <include file="$(find px4)/launch/mavros_posix_sitl.launch">
+        <arg name="world" default="$(arg world)"/>
+        <arg name="verbose" value="true"/>
+        <arg name="vehicle" value="$(arg vehicle)"/>
+        <arg name="interactive" value="false"/>
+        <arg name="respawn_mavros" value="false"/>
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    Pyx4_node
+    <node pkg="pyx4" type="teleoperation.py" name="teleop" output="screen"
+        args="
+              --timeout $(arg timeout)
+              --linear $(arg linear)
+              --angular $(arg angular)
+              --z_min $(arg z_min)
+              --z_max $(arg z_max)
+          "
+        />
+    
+    <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="twist_teleop"
+          args="--timeout $(arg timeout)"/>
+
+</launch>
+`````

@@ -68,6 +68,7 @@ def Wpts_from_csv(file_path):
                 yaw_type=row['yaw_type'],
                 yaw_setpoint=np.float64(row['yaw_setpoint']),
                 coordinate_frame=row['coordinate_frame'],
+                timeout=int(row['timeout'])
                 )
             instruction_cnt = instruction_cnt + 1
 
