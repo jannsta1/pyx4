@@ -18,6 +18,7 @@ CSV_HEADER = ['label', 'x', 'y', 'z', 'yaw']
 def callback(data):
     row = [data.state_label, data.x, data.y, data.z, data.yaw]
     # Open the file in append mode to not overwrite
+    rospy.loginfo(row)
     with open(comp_file, 'a') as csvfile:
         writer = csv.writer(csvfile, delimiter=',',)
         writer.writerow(row)
@@ -35,9 +36,12 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="ROS node to create test data")
     parser.add_argument('--csv', type=str, default='basic_test.csv')
-    parser.add_argument('--overwrite', type=bool, default=False)
+    parser.add_argument('--overwrite', type=str, default='False')
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
-    print(args)
+
+    # TODO Find a better way to pass the overwrite arg
+    if args.overwrite == 'False': args.overwrite = False
+    
     if os.path.isabs(args.csv):
         comp_file = args.csv
     else:
@@ -48,9 +52,7 @@ if __name__ == '__main__':
     # Overwriting an existing comparison file could be dangerous as it
     # could break the tests.
     if os.path.isfile(comp_file) and args.overwrite == False:
-        raise AttributeError(
-            'file {} already exists and overwrite is set to false'.format(comp_file)
-        )
+        raise AttributeError("file {} already exists and overwrite is set to false".format(comp_file))
 
     # Overwrite the file with the CSV header
     else:
