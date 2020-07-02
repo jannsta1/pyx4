@@ -1,14 +1,14 @@
 instruction_type,instruction_args,timeout,xy_type,x_setpoint,y_setpoint,z_type,z_setpoint,yaw_type,yaw_setpoint,coordinate_frame
 pos,,3,pos,0,0,pos,3,pos,0,1
 pos,,5,pos,5,0,pos,3,pos,0,1
-pos,,5,pos,0,0,pos,10,pos,0,1
-hold,,10,vel,0,0,pos,3,pos,0,1 
-vel,,3,vel,1,0,pos,10,pos,0,1
-vel,,3,vel,0,1,pos,10,pos,0,1
-vel,,3,vel,-2,-2,pos,5,pos,0,1
+pos,,5,pos,5,5,pos,3,pos,0,1
+pos,,5,pos,0,0,pos,8,pos,0,1
+vel,,3,vel,1,0,pos,8,pos,0,1
+vel,,3,vel,0,1,pos,8,pos,0,1
+vel,,5,vel,-2,-2,pos,5,pos,0,1
 hold,,3,vel,0,0,pos,5,pos,0,1 
 pos,,3,vel,0,0,pos,5,pos,2,1
-pos,,3,vel,2,2,pos,10,pos,1,1
+pos,,5,vel,2,2,pos,8,pos,1,1
 pos,,15,pos,0,0,pos,0,pos,0,1
 
 

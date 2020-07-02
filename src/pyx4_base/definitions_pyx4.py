@@ -3,6 +3,7 @@ from enum import Enum
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
+TEST_COMP = os.path.join(DATA_DIR, 'test')
 MISSION_SPECS = os.path.join(DATA_DIR, 'mission_specs')
 
 EXAMPLE_MISSION = os.path.join(MISSION_SPECS, 'basic_wpts.csv')
