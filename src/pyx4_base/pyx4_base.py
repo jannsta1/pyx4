@@ -8,6 +8,7 @@ from definitions_pyx4 import *
 from mission_states import *
 from threading import Thread
 from commander import *
+from geometry_msgs.msg import PoseStamped
 
 from pyx4.msg import pyx4_state as Pyx4_msg
 
@@ -46,6 +47,12 @@ class Pyx4_base(object):
         self.pyx4_state_msg = Pyx4_msg()
         self.pyx4_state_msg.flight_state = 'Not_set'
         self.pyx4_state_msg.state_label = 'Not_set'
+        self.pyx4_state_msg.x = 0.0
+        self.pyx4_state_msg.y = 0.0
+        self.pyx4_state_msg.z = 0.0
+        self.pyx4_state_msg.yaw = 0.0
+        # Start the local_position_listener subscriber
+        self.local_position_listener()
 
         # get robot type - it is essential that this environmental variable is written so that we know is its a robot
         # or a simulation
@@ -95,6 +102,22 @@ class Pyx4_base(object):
             self.sp_pub_thread.start()
             rospy.loginfo('sp pub initialised')
 
+    def local_position_listener(self):
+        """ Subscribe to the topic mavros/local_position/pose."""
+        rospy.Subscriber("mavros/local_position/pose", PoseStamped,
+                         self.local_position_cb)
+
+    def local_position_cb(self, data):
+        # TODO
+        """ Parse the PoseStamped message from mavros/local_position/pose
+        and add set the class attributes for it to be published as
+        a pyx4_state message.
+        """
+        data_pos= data.pose.position
+        self.pyx4_state_msg.x = data_pos.x
+        self.pyx4_state_msg.y = data_pos.y
+        self.pyx4_state_msg.z = data_pos.z
+        self.pyx4_state_msg.yaw = data.pose.orientation.z
 
     def publish_pyx4_state(self):
 
@@ -155,16 +178,16 @@ if __name__ == '__main__':
     parser.add_argument('--state_estimation', type=int, default=0)
 
 
-    args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
-
-
+    args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])    
+    
 
     # flight_instructions = {0: Take_off_state()}
 
     # mission_file = os.path.join(MISSION_SPECS, 'big_square.csv')
     # flight_instructions = Wpts_from_csv(file_path=mission_file)
 
-
+    
+    
     pyx4 = Pyx4_base(flight_instructions=flight_instructions,
                      enforce_height_mode_flag=args.enforce_hgt_mode_flag,
                      height_mode_req=args.height_mode_req,
