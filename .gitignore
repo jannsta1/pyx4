@@ -6,3 +6,8 @@ learning_flights/data/lf_images/last_run/
 src/learning_flights_pyeye/definitions_lf_pyeye_local.py
 src/learning_flights_common/latest_lf_images.pdf
 
+.srctrlbm
+.srctrldb
+.srctrlprj
+
+#*
