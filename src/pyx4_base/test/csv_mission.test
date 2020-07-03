@@ -1,0 +1,32 @@
+<launch>
+
+    <arg name="gui" default="true"/>
+    <arg name="world" default="empty.world"/>
+    <arg name="vehicle" default="iris"/>
+
+    <arg name="csv" default="basic_test.csv"/>
+    <arg name="overwrite" default="False"/>
+
+    PX4 MAVROS NOD
+    <include file="$(find px4)/launch/mavros_posix_sitl.launch">
+        <arg name="world" default="$(arg world)"/>
+        <arg name="verbose" value="true"/>
+        <arg name="vehicle" value="$(arg vehicle)"/>
+        <arg name="interactive" value="false"/>
+        <arg name="respawn_mavros" value="false"/>
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    Pyx4_node
+    <node pkg="pyx4" type="csv_mission.py" name="csv_mission" output="log"
+        args="--csv $(arg csv)"
+    />
+
+    <node pkg="pyx4" type="csv_helper.py" name="csv_helper" output="screen"
+        args="--csv $(arg csv)"
+    />
+
+    test test-name="csv" pkg="pyx4" type="csv_mission_test.py" time-limit="120.0"
+    args="--csv $(arg csv)"
+
+</launch>

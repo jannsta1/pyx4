@@ -34,7 +34,7 @@ def get_test_data():
     
 if __name__ == '__main__':
     import argparse
-    parser = argparse.ArgumentParser(description="ROS node to create test data")
+    parser = argparse.ArgumentParser(description="Node to create test data")
     parser.add_argument('--csv', type=str, default='basic_test.csv')
     parser.add_argument('--overwrite', type=str, default='False')
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
@@ -52,7 +52,8 @@ if __name__ == '__main__':
     # Overwriting an existing comparison file could be dangerous as it
     # could break the tests.
     if os.path.isfile(comp_file) and args.overwrite == False:
-        raise AttributeError("file {} already exists and overwrite is set to false".format(comp_file))
+        raise AttributeError("""file {} already exists and
+        overwrite is set to false""".format(comp_file))
 
     # Overwrite the file with the CSV header
     else:
