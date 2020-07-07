@@ -1,4 +1,4 @@
 Header header
-string state_label
+string test_type
 bool passed
 
