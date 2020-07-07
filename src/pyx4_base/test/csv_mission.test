@@ -26,7 +26,6 @@
         args="--csv $(arg csv)"
     />
 
-    test test-name="csv" pkg="pyx4" type="csv_mission_test.py" time-limit="120.0"
-    args="--csv $(arg csv)"
+    <test test-name="pyx4_test" pkg="pyx4" type="csv_mission_test.py" time-limit="120.0"/>
 
 </launch>

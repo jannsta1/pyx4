@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 PKG = 'pyx4'
-NAME = 'pyx4_test_csv'
+NAME = 'pyx4_test'
 
 import sys, time, os, csv
 import numpy as np
@@ -13,12 +13,11 @@ from geometry_msgs.msg import PoseStamped
 from mavros_msgs.msg import PositionTarget
 from definitions_pyx4 import TEST_COMP, MISSION_SPECS
 
-class TestPeerSubscribeListener():
+class Pyx4Test():
     def __init__(self, mission_file, comp_file):
         self.success = False
-        self.wpts = TestPeerSubscribeListener._parse_comp_file(comp_file)
-        # self.targets = TestPeerSubscribeListener._parse_mission_file(mission_file)
-        self.test_types = {'wpt_pos': 'waypoint_position', 'basic': 'basic'}
+        self.wpts = Pyx4Test._parse_comp_file(comp_file)
+        # self.targets = Pyx4Test._parse_mission_file(mission_file)
         self.total_wpts = len(self.wpts)
         self.current_wpt = 0
         self.current_pos = []
@@ -70,7 +69,7 @@ class TestPeerSubscribeListener():
             
         rospy.loginfo("{} pass: {}".format(data.state_label, pass_p))
         msg = Pyx4_test_msg()
-        msg.test_type = self.test_types['wpt_pos']
+        msg.test_type = 'wpt_pos'
         msg.passed = pass_p
         self.pyx4_test_pub.publish(msg)
         self.current_wpt += 1
@@ -86,7 +85,7 @@ class TestPeerSubscribeListener():
     def position_target_callback(self, data):
         self.current_target = data
 
-    def test_notify(self):
+    def main(self):
         """ Method to manage subscriptions:
         
         - pyx4_state topic: to know when a waypoint is reached.
@@ -129,13 +128,13 @@ if __name__ == '__main__':
     comp_file = os.path.join(TEST_COMP, args.csv)
     mission_file = os.path.join(MISSION_SPECS, args.csv)
 
-    # if not os.path.isfile(mission_file):
-    #     raise AttributeError("""Mission file {} not found.
-    #     """.format(mission_file))
+    if not os.path.isfile(mission_file):
+        raise AttributeError("""Mission file {} not found.
+        """.format(mission_file))
 
-    #  elif not os.path.isfile(comp_file):
-    #      raise AttributeError("""file {} does not exist.
-    #      Run test_data to create the test data for the selected mission.
-    #      """.format(comp_file))
-    o = TestPeerSubscribeListener(mission_file, comp_file)
-    o.test_notify()
+    if not os.path.isfile(comp_file):
+        raise AttributeError("""file {} does not exist.
+        Run test_data to create the test data for the selected mission.
+        """.format(comp_file))
+    pyx4_test = Pyx4Test(mission_file, comp_file)
+    pyx4_test.main()
