@@ -4,23 +4,13 @@ from __future__ import print_function
 PKG = 'pyx4'
 NAME = 'pyx4_test_csv'
 
-import sys 
-import time
-import unittest
-import os
-import csv
-
+import sys, time, os, csv
 import numpy as np
-
 import rospy
-import rostest
-import roslib.scriptutil as scriptutil
-from std_msgs.msg import String
 from pyx4.msg import pyx4_state as Pyx4_msg
 from pyx4.msg import pyx4_test as Pyx4_test_msg
+from geometry_msgs.msg import PoseStamped
 from definitions_pyx4 import TEST_COMP
-
-
 
 class TestPeerSubscribeListener():
     def __init__(self, *args):
@@ -28,6 +18,7 @@ class TestPeerSubscribeListener():
         self.wpts = TestPeerSubscribeListener._parse_comp_file()
         self.total_wpts = len(self.wpts)
         self.current_wpt = 0
+        self.current_pos = []
         self.atol, self.rtol = 0, 10
         self.pyx4_test_pub = rospy.Publisher(NAME + '/pyx4_test',
                                              Pyx4_test_msg, queue_size=10)
@@ -44,13 +35,13 @@ class TestPeerSubscribeListener():
             return {i: [np.array(map(float, [dic['x'], dic['y'], dic['z'], dic['yaw']]))]
                     for i, dic in enumerate(reader)}
         
-    def callback(self, data):
-            
+    def pyx4_callback(self, data):
+        """ Compares the test data for the current waypoint to self.current_pos
+        :param data: pyx4_state message
+        """
         if self.current_wpt < self.total_wpts:
-            cb_wpts = np.array([data.x, data.y, data.z, data.yaw])
-            
             pass_p = np.allclose(self.wpts[self.current_wpt][0],
-                                 cb_wpts,
+                                 self.current_pos,
                                  rtol=2, atol=1)
         else:
             pass_p = False
@@ -62,11 +53,35 @@ class TestPeerSubscribeListener():
         self.pyx4_test_pub.publish(msg)
         self.current_wpt += 1
 
+    def local_position_callback(self, data):
+        """ Gets the local position data from /mavros/local_position/pose and
+        updates the attribute current.
+        """
+        pos = data.pose.position
+        self.current_pos = np.array([pos.x, pos.y, pos.z,
+                                     data.pose.orientation.z])
+
     def test_notify(self):
-        rospy.Subscriber("pyx4_node/pyx4_state", Pyx4_msg, self.callback)
+        """ Method to manage subscriptions:
+        
+        - pyx4_state topic: to know when a waypoint is reached.
+          Callback: compare the local position in the test data for that
+                    waypoint to the mavros/local_position data.
+       
+        - mavros/local_position: receive the local position
+          Callback: update the attribute self.current_pos
+        """
+        # Subscribe to pyx4_state
+        rospy.Subscriber("pyx4_node/pyx4_state", Pyx4_msg,
+                         self.pyx4_callback)
+        # Subscribe to mavros/local_position
+        rospy.Subscriber("mavros/local_position/pose", PoseStamped,
+                         self.local_position_callback)
+
         rospy.init_node(NAME, anonymous=True)
+        # TODO: Set proper time
         timeout_t = time.time() + 10.0*1000 #10 seconds
-        while not rospy.is_shutdown() and not self.success and time.time() < timeout_t:
+        while not rospy.is_shutdown() and time.time() < timeout_t:
             time.sleep(0.1)
         
 if __name__ == '__main__':
