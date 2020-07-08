@@ -17,11 +17,12 @@ class Pyx4Test():
     def __init__(self, mission_file, comp_file):
         self.success = False
         self.wpts = Pyx4Test._parse_comp_file(comp_file)
-        # self.targets = Pyx4Test._parse_mission_file(mission_file)
+        self.targets = Pyx4Test._parse_mission_file(mission_file)
         self.total_wpts = len(self.wpts)
         self.current_wpt = 0
         self.current_pos = []
-        self.current_target = {}
+        self.current_target = None
+        self.target_sample_num = 0
         self.atol, self.rtol = 0, 10
         self.pyx4_test_pub = rospy.Publisher(NAME + '/pyx4_test',
                                              Pyx4_test_msg, queue_size=10)
@@ -35,35 +36,41 @@ class Pyx4Test():
         """
         with open(comp_file, 'r') as f:
             reader = csv.DictReader(f)
-            return {i: [np.array(map(float, [dic['x'],
+            return {i: np.array(map(float, [dic['x'],
                                              dic['y'],
                                              dic['z'],
-                                             dic['yaw']]))]
+                                             dic['yaw']]))
                     for i, dic in enumerate(reader)}
 
-    # @staticmethod
-    # def _parse_mission_file(mission_file):
-    #     """ Read the test comparison file and return a dictionary of arrays,
-    #     one for each waypoint.
-    #     :param comp_file: a CSV file (label, x, y, z, yaw)
-    #     :return {index: Array(x, y, z, yaw)}
-    #     """
-    #     with open(mission_file, 'r') as f:
-    #         reader = csv.DictReader(f)
-    #         return {i+2: {'xy': [dic['xy_type'], dic['x_setpoint'],
-    #                            dic['y_setpoint']],
-    #                     'z': [dic['z_type'], dic['z_setpoint']],
-    #                     'yaw': [dic['yaw_type'], dic['yaw_setpoint']]}
-    #                 for i, dic in enumerate(reader)}
+    @staticmethod
+    def _parse_mission_file(mission_file):
+        """ Read the test comparison file and return a dictionary of arrays,
+        one for each waypoint.
+        :param comp_file: a CSV file (label, x, y, z, yaw)
+        :return {index: Array(x, y, z, yaw)}
+        """
+        with open(mission_file, 'r') as f:
+            reader = csv.DictReader(f)
+            return {i+1: {'xy_type': dic['xy_type'],
+                          'x': dic['x_setpoint'],
+                          'y': dic['y_setpoint'],
+                          'z_type': dic['z_type'],
+                          'z': dic['z_setpoint'],
+                          'yaw_type': dic['yaw_type'],
+                          'yaw': dic['yaw_setpoint']}
+                    for i, dic in enumerate(reader)}
 
     def pyx4_callback(self, data):
         """ Compares the test data for the current waypoint to self.current_pos
         :param data: pyx4_state message
         """
         if self.current_wpt < self.total_wpts:
-            pass_p = np.allclose(self.wpts[self.current_wpt][0],
+            pass_p = np.allclose(self.wpts[self.current_wpt],
                                  self.current_pos,
                                  rtol=2, atol=1)
+            rospy.loginfo("""wpts[current]: {}, current pos:
+            {}""".format(self.wpts[self.current_wpt],
+                         self.current_pos,))
         else:
             pass_p = False
             
@@ -72,7 +79,118 @@ class Pyx4Test():
         msg.test_type = 'wpt_pos'
         msg.passed = pass_p
         self.pyx4_test_pub.publish(msg)
+
+        self.setpoint_type_check(data, self.target_sample_num)
         self.current_wpt += 1
+
+    def setpoint_type_check(self, cb_data, target_sample_num):
+        # Last waypoint doesn't have target and
+        # arming state is not needed because it is not in the mission CSV
+        if (self.current_wpt < self.total_wpts - 1 and
+            cb_data.state_label != 'arming - generic'):
+            # Discard the first samples to avoid errors
+            while self.target_sample_num <= target_sample_num + 35:
+                pass
+
+            data_target = self.targets[self.current_wpt]
+
+            # If target for xy is position
+            if data_target['xy_type'] == 'pos':
+                # If the x target in the mission is different than launched
+                if (int(data_target['x']) !=
+                    round(self.current_target.position.x)):
+                    passed = False
+                    self.send_target_error_msg(passed, 'x',
+                                               data_target['xy_type'],
+                                               data_target['x'],
+                                               'position',
+                                               self.current_target.position.x)
+
+                # If the y target in the mission is different than launched
+                if (int(data_target['y']) !=
+                    round(self.current_target.position.y)):
+                    self.send_target_error_msg(passed, 'y',
+                                               data_target['xy_type'],
+                                               data_target['y'],
+                                               'position',
+                                               self.current_target.position.y)
+
+            # If target for xy is velocity
+            elif data_target['xy_type'] == 'vel':
+                # If the x target in the mission is different than launched
+                if (int(data_target['x']) !=
+                    round(self.current_target.velocity.x)):
+                    passed = False
+                    self.send_target_error_msg(passed, 'x',
+                                               data_target['xy_type'],
+                                               data_target['x'],
+                                               'velocity',
+                                               self.current_target.velocity.x)
+                                                
+                # If the y target in the mission is different than launched
+                if (int(data_target['y']) !=
+                    round(self.current_target.velocity.y)):
+                    passed = False
+                    self.send_target_error_msg(passed, 'y',
+                                               data_target['xy_type'],
+                                               data_target['y'],
+                                               'velocity',
+                                               self.current_target.velocity.y)
+            # If target for z is position
+            if data_target['z_type'] == 'pos':
+                # If the z target in the mission is different than launched
+                if (int(data_target['z']) !=
+                    round(self.current_target.position.z)):
+                    passed = False
+                    self.send_target_error_msg(passed, 'z',
+                                               data_target['z_type'],
+                                               data_target['z'],
+                                               'position',
+                                               self.current_target.position.z)
+                    
+            # If target for yaw is position
+            if data_target['yaw_type'] == 'pos':
+                # If the yaw target in the mission is different than launched
+                if (int(data_target['yaw']) !=
+                    round(self.current_target.yaw)):
+                    passed = False
+                    self.send_target_error_msg(passed, 'yaw',
+                                               data_target['yaw_type'],
+                                               data_target['yaw'],
+                                               'position',
+                                               self.current_target.yaw)
+
+            if passed:
+                msg = Pyx4_test_msg()
+                msg.test_type = 'target'
+                msg.passed = True
+                msg.error = ''
+                self.pyx4_test_pub.publish(msg)
+                rospy.loginfo("""TARGET TEST:
+                Waypoint {} passed the target test.
+                """.format(self.current_wpt))
+                                    
+        
+    def send_target_error_msg(self, passed, sp, expected_type, expected,
+                              given_type, given):
+        """ Function to publish the error message when the target is incorrect.
+        :param sp: setpoint (xy, z, yaw)
+        :param expected_type: expected setpoint type (pos, vel)
+        :param expected: expected value
+        :param given_type: pos, vel
+        :param given: given value
+        """
+        msg = Pyx4_test_msg()
+        msg.test_type = 'target'
+        msg.passed = passed
+        error_msg = """TARGET TEST:
+        Waypoint {} did not pass the target test for setpoint {}:
+        - Expected type {} with value {}, but got type {} with value {}
+        """.format(self.current_wpt, sp, expected_type, expected,
+                   given_type, given)
+        
+        self.pyx4_test_pub.publish(msg)
+        rospy.loginfo(error_msg)
 
     def local_position_callback(self, data):
         """ Gets the local position data from /mavros/local_position/pose and
@@ -83,6 +201,7 @@ class Pyx4Test():
                                      data.pose.orientation.z])
 
     def position_target_callback(self, data):
+        self.target_sample_num += 1
         self.current_target = data
 
     def main(self):
