@@ -181,6 +181,8 @@ where
  - `comp` is the comparison mission to write. Default: `pyx4_base/data/test/basic_test.csv`. 
  - `overwrite` is set to `false` by default. If set to true, it will overwrite the comp_file if it already exists. If `false` and the comparison file exists, it throws an exception.
  
+**Currently, the default testing mission `basic_test.csv` is as described above, and the default comparison file `basic_test.csv` has been obtained using `get_test_data`.** 
+ 
 #### Testing
 
 Run 
