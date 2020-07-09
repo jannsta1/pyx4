@@ -60,17 +60,17 @@ class TestData():
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description="Node to create test data")
-    parser.add_argument('--csv', type=str, default='basic_test.csv')
+    parser.add_argument('--comp', type=str, default='basic_test.csv')
     parser.add_argument('--overwrite', type=str, default='False')
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
 
     # TODO Find a better way to pass the overwrite arg
     if args.overwrite == 'False': args.overwrite = False
     
-    if os.path.isabs(args.csv):
-        comp_file = args.csv
+    if os.path.isabs(args.comp):
+        comp_file = args.comp
     else:
-        comp_file = os.path.join(TEST_COMP, args.csv)
+        comp_file = os.path.join(TEST_COMP, args.comp)
 
     # If the overwrite argument is false and the file already exists,
     # throw an error.

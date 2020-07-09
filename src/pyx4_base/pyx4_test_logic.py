@@ -108,12 +108,13 @@ if __name__ == '__main__':
     #test_data and csv_mission_test
     import argparse
     parser = argparse.ArgumentParser(description="ROS test node")
-    parser.add_argument('--csv', type=str, default='basic_test.csv')
+    parser.add_argument('--mission', type=str, default='basic_test.csv')
+    parser.add_argument('--comp', type=str, default='basic_test.csv')
     args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
     
     # Mission and comparisson files have the same name by definition
-    comp_file = os.path.join(TEST_COMP, args.csv)
-    mission_file = os.path.join(MISSION_SPECS, args.csv)
+    comp_file = os.path.join(TEST_COMP, args.comp)
+    mission_file = os.path.join(MISSION_SPECS, args.mission)
 
     if not os.path.isfile(mission_file):
         raise AttributeError("""Mission file {} not found.

@@ -4,7 +4,8 @@
     <arg name="world" default="empty.world"/>
     <arg name="vehicle" default="iris"/>
 
-    <arg name="csv" default="basic_test.csv"/>
+    <arg name="mission" default="basic_test.csv"/>
+    <arg name="comp" default="basic_test.csv"/>
     <arg name="overwrite" default="False"/>
 
     PX4 MAVROS NOD
@@ -17,14 +18,15 @@
         <arg name="gui" value="$(arg gui)"/>
     </include>
 
-    test_data node
-    <node pkg="pyx4" type="test_data.py" name="test_data" output="screen"
-    args="--csv $(arg csv) --overwrite $(arg overwrite)"
-    />
-
     Pyx4_node
     <node pkg="pyx4" type="csv_mission.py" name="csv_mission" output="log"
-        args="--csv $(arg csv)"
+        args="--csv $(arg mission)"
     />
+
+    <node pkg="pyx4" type="csv_helper.py" name="csv_helper" output="screen"
+        args="--mission $(arg mission) --comp $(arg comp)"
+    />
+
+    <test test-name="pyx4_test" pkg="pyx4" type="csv_mission_test.py" time-limit="120.0"/>
 
 </launch>

@@ -96,7 +96,7 @@ nano .ignition/fuel/config.yaml
 
 - Run `source ~/.bashrc`
 
-### `[Err] [Server.cc:379] Could not open file[empty.world]` when running with `world:=empty.world`
+#### `[Err] [Server.cc:379] Could not open file[empty.world]` when running with `world:=empty.world`
 
 - Check if `/home/user/path-to-Firmware/Firmware/Tools/sitl_gazebo/worlds` exists.
 - If so, find the line `export GAZEBO_RESOURCE_PATH` and add: `~/Firmware/Tools/sitl_gazebo/worlds`
@@ -124,6 +124,72 @@ roslaunch pyx4 csv_mission.launch csv:=YOUR_MISSION_FILE.csv
 
 - instruction_args can be passed. This is useful for sending unspecified parameters to a custom flight state. 
 The arguments should be formatted like a dictionary but with semicolons to divide entries e.g. {speed:2 ; z_tgt:3.0}
+
+# Testing
+ 
+The goal of the testing platform is to ensure that no bugs are introduced when the code is modified.
+
+For that, a test mission is created, which aim is to perform the basic logic of the codebase. Then, to test, the test_mission is performed and the testing platform checks that the position of the drone at each waypoint is the same as it was before the code was modified.
+
+## Test mission: `data/mission_specs/basic_test.csv`
+
+A CSV mission designed to test the basic logic of the pyx4 system.
+
+1. To test *z* alone in target position: take off to 3m maintaining the x and y positions at the origin.
+2. Test *x* alone in target position: advance 10m in *x*, maintain *y* and *z*.
+3. Test *z* alone in target position: advance 10m in *x*, maintain *x* and *z*.
+4. Test moving in *x*, *y* and *z* in target position: go back to the origin in *x* and *y* while increasing the altitude to 10m.
+5. Test *x* alone in target velocity: advance in *x* at velocity 1 for 10s, maintain *y* and *z*.
+6. Test *y* alone in target velocity: advance in *y* at velocity 1 for 10s, maintain *x* and *z*.
+7. Test *x* and *y* in target velocity while moving *z* in target position: advance in *x* and *y* at velocity -2 for 12s while decreasing the altitude to 5m.
+8. Test holding the position: maintain *x*, *y* and *z* for 5s.
+9. Test *x* and *y* in target velocity while moving *z* in target position and adding yaw: advance in *x* and *y* at velocity 2 for 10s while increasing the altitude to 8m and adding a target yaw of 1.
+10. Test landing: land at the starting point.
+
+## Testing workflow
+
+### Important files:
+    - `pyx4_base/data/mission_specs/basic_test.csv`: the default test mission
+    - `pyx4_base/data/test/basic_test.csv`: the test mission comparison file. For each waypoint, it contains the local positions the drone should be at when it reaches the waypoints.
+    - `pyx4_base/test/pyx4.test`: launch the Px4 and Pyx4 nodes to perform the mission. Launch `pyx4_test_logic.py` to perform the test logics. Launch `pyx4_test.py` to perform the unittests.
+    - `pyx4_base/get_test_data.py` *(optional)*: to get the comparisson file for testing. Alternatively, the waypoints could be computed by hand.
+    - `pyx4_base/launch/get_test_data.launch`: launch file to launch `get_test_data.py`. 
+    - `pyx4_base/pyx4_test_logic.py`: ROS node where most of the testing logic happens.
+    - `pyx4_base/pyx4_test.py`: unittest node that performs the test assertions.
+    
+### Steps
+
+#### Collecting data:
+
+To test a comparison file is needed. This MUST be done when the code has passed some tests or when the developer is confident the code base is working properly.
+
+If done manually, check the test mission to compute the final position for each waypoint and write a CSV in `pyx4_base/data/test` with the following columns:
+
+- label: the waypoint number
+- x: *x* position at the waypoint
+- y: *y* position at the waypoint
+- z: *z* position at the waypoint
+- yaw: *yaw* position at the waypoint
+
+If done automatically, run
+```
+roslaunch pyx4 get_test_data.launch mission:=yourmission.csv comp:=yourcomp.csv overwrite:=true/false
+```
+where
+ - `mission` is the test mission. Default: `pyx4_base/data/mission_specs/basic_test.csv`;
+ - `comp` is the comparison mission to write. Default: `pyx4_base/data/test/basic_test.csv`. 
+ - `overwrite` is set to `false` by default. If set to true, it will overwrite the comp_file if it already exists. If `false` and the comparison file exists, it throws an exception.
+ 
+#### Testing
+
+Run 
+```
+rostest pyx4 pyx4.test mission:=yourmission.csv comp:=yourcomp.csv
+```
+where
+- `mission` is, by default, `pyx4_base/data/mission_specs/basic_test.csv`, and
+- `comp` is `pyx4_base/data/test/basic_test.csv`
+
 
 # Teleoperation
 
