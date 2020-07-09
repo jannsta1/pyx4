@@ -149,13 +149,14 @@ A CSV mission designed to test the basic logic of the pyx4 system.
 ## Testing workflow
 
 ### Important files:
-    - `pyx4_base/data/mission_specs/basic_test.csv`: the default test mission
-    - `pyx4_base/data/test/basic_test.csv`: the test mission comparison file. For each waypoint, it contains the local positions the drone should be at when it reaches the waypoints.
-    - `pyx4_base/test/pyx4.test`: launch the Px4 and Pyx4 nodes to perform the mission. Launch `pyx4_test_logic.py` to perform the test logics. Launch `pyx4_test.py` to perform the unittests.
-    - `pyx4_base/get_test_data.py` *(optional)*: to get the comparisson file for testing. Alternatively, the waypoints could be computed by hand.
-    - `pyx4_base/launch/get_test_data.launch`: launch file to launch `get_test_data.py`. 
-    - `pyx4_base/pyx4_test_logic.py`: ROS node where most of the testing logic happens.
-    - `pyx4_base/pyx4_test.py`: unittest node that performs the test assertions.
+
+- `pyx4_base/data/mission_specs/basic_test.csv`: the default test mission
+- `pyx4_base/data/test/basic_test.csv`: the test mission comparison file. For each waypoint, it contains the local positions the drone should be at when it reaches the waypoints.
+- `pyx4_base/test/pyx4.test`: launch the Px4 and Pyx4 nodes to perform the mission. Launch `pyx4_test_logic.py` to perform the test logics. Launch `pyx4_test.py` to perform the unittests.
+- `pyx4_base/get_test_data.py` *(optional)*: to get the comparisson file for testing. Alternatively, the waypoints could be computed by hand.
+- `pyx4_base/launch/get_test_data.launch`: launch file to launch `get_test_data.py`. 
+- `pyx4_base/pyx4_test_logic.py`: ROS node where most of the testing logic happens.
+- `pyx4_base/pyx4_test.py`: unittest node that performs the test assertions.
     
 ### Steps
 
