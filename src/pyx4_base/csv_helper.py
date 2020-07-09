@@ -5,6 +5,7 @@ PKG = 'pyx4'
 NAME = 'pyx4_test'
 
 import sys, time, os, csv
+import multiprocessing as mp
 import numpy as np
 import rospy
 from pyx4.msg import pyx4_state as Pyx4_msg
@@ -68,9 +69,9 @@ class Pyx4Test():
             pass_p = np.allclose(self.wpts[self.current_wpt],
                                  self.current_pos,
                                  rtol=2, atol=1)
-            rospy.loginfo("""wpts[current]: {}, current pos:
-            {}""".format(self.wpts[self.current_wpt],
-                         self.current_pos,))
+            # rospy.loginfo("""wpts[current]: {}, current pos:
+            # {}""".format(self.wpts[self.current_wpt],
+            #              self.current_pos,))
         else:
             pass_p = False
             
@@ -80,85 +81,104 @@ class Pyx4Test():
         msg.passed = pass_p
         self.pyx4_test_pub.publish(msg)
 
-        self.setpoint_type_check(data, self.target_sample_num)
+        pool = mp.Pool(processes=1)
+        pool.apply_async(self.async_sp_type_check,
+                         args=(data, self.target_sample_num),
+                         callback=self.sp_type_check_cb)
+
+        
         self.current_wpt += 1
 
-    def setpoint_type_check(self, cb_data, target_sample_num):
+    def async_sp_type_check(self, cb_data, target_sample_num):
+        print("""HERE""")
         # Last waypoint doesn't have target and
         # arming state is not needed because it is not in the mission CSV
         if (self.current_wpt < self.total_wpts - 1 and
             cb_data.state_label != 'arming - generic'):
             # Discard the first samples to avoid errors
-            while self.target_sample_num <= target_sample_num + 35:
-                pass
+            #while self.target_sample_num <= target_sample_num + 35:
+            #    pass
+            time.sleep(2)
+            rospy.loginfo(self.current_target)
+            return {'data_target': self.targets[self.current_wpt],
+                    'current_target': self.current_target,
+                    'current_wpt': self.current_wpt}
+        else: return None
 
-            data_target = self.targets[self.current_wpt]
+    def sp_type_check_cb(self, dic):
+        if dic:
+            data_target = dic['data_target']
+            current_target = dic['current_target']
+            current_wpt = dic['current_wpt']
+            
+            rospy.loginfo("""\n\ndata target {} \n current: {}
+            """.format(data_target, current_target))
 
             # If target for xy is position
             if data_target['xy_type'] == 'pos':
                 # If the x target in the mission is different than launched
                 if (int(data_target['x']) !=
-                    round(self.current_target.position.x)):
+                    round(current_target.position.x)):
                     passed = False
                     self.send_target_error_msg(passed, 'x',
                                                data_target['xy_type'],
                                                data_target['x'],
                                                'position',
-                                               self.current_target.position.x)
+                                               current_target.position.x)
 
                 # If the y target in the mission is different than launched
                 if (int(data_target['y']) !=
-                    round(self.current_target.position.y)):
+                    round(current_target.position.y)):
                     self.send_target_error_msg(passed, 'y',
                                                data_target['xy_type'],
                                                data_target['y'],
                                                'position',
-                                               self.current_target.position.y)
+                                               current_target.position.y)
 
             # If target for xy is velocity
             elif data_target['xy_type'] == 'vel':
                 # If the x target in the mission is different than launched
                 if (int(data_target['x']) !=
-                    round(self.current_target.velocity.x)):
+                    round(current_target.velocity.x)):
                     passed = False
                     self.send_target_error_msg(passed, 'x',
                                                data_target['xy_type'],
                                                data_target['x'],
                                                'velocity',
-                                               self.current_target.velocity.x)
+                                               current_target.velocity.x)
                                                 
                 # If the y target in the mission is different than launched
                 if (int(data_target['y']) !=
-                    round(self.current_target.velocity.y)):
+                    round(current_target.velocity.y)):
                     passed = False
                     self.send_target_error_msg(passed, 'y',
                                                data_target['xy_type'],
                                                data_target['y'],
                                                'velocity',
-                                               self.current_target.velocity.y)
+                                               current_target.velocity.y)
             # If target for z is position
             if data_target['z_type'] == 'pos':
                 # If the z target in the mission is different than launched
                 if (int(data_target['z']) !=
-                    round(self.current_target.position.z)):
+                    round(current_target.position.z)):
                     passed = False
                     self.send_target_error_msg(passed, 'z',
                                                data_target['z_type'],
                                                data_target['z'],
                                                'position',
-                                               self.current_target.position.z)
+                                               current_target.position.z)
                     
             # If target for yaw is position
             if data_target['yaw_type'] == 'pos':
                 # If the yaw target in the mission is different than launched
                 if (int(data_target['yaw']) !=
-                    round(self.current_target.yaw)):
+                    round(current_target.yaw)):
                     passed = False
                     self.send_target_error_msg(passed, 'yaw',
                                                data_target['yaw_type'],
                                                data_target['yaw'],
                                                'position',
-                                               self.current_target.yaw)
+                                               current_target.yaw)
 
             if passed:
                 msg = Pyx4_test_msg()
@@ -168,7 +188,7 @@ class Pyx4Test():
                 self.pyx4_test_pub.publish(msg)
                 rospy.loginfo("""TARGET TEST:
                 Waypoint {} passed the target test.
-                """.format(self.current_wpt))
+                """.format(current_wpt))
                                     
         
     def send_target_error_msg(self, passed, sp, expected_type, expected,
