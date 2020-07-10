@@ -12,7 +12,6 @@ PKG = 'pyx4'
 NAME = 'pyx4_test'
 
 import sys, time, os, csv
-import multiprocessing as mp
 import numpy as np
 import rospy
 from pyx4.msg import pyx4_state as Pyx4_msg
@@ -23,6 +22,9 @@ from definitions_pyx4 import TEST_COMP, MISSION_SPECS
 from setpoint_bitmasks import *
 
 class Pyx4Test():
+    """ Class to handle the main logic, subscribers and publishers
+    for Pyx4 unit testing.
+    """
     def __init__(self, mission_file, comp_file):
         # Position for each waypoint
         self.wpts = Pyx4Test._parse_comp_file(comp_file)
