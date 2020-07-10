@@ -1,5 +1,5 @@
 Header header
 string test_type
-string error
+string description
 bool passed
 

@@ -1,5 +1,4 @@
 instruction_type,instruction_args,timeout,xy_type,x_setpoint,y_setpoint,z_type,z_setpoint,yaw_type,yaw_setpoint,coordinate_frame
-pos,,10,pos,0,0,pos,3,pos,0,1
 pos,,10,pos,10,0,pos,3,pos,0,1
 pos,,10,pos,10,10,pos,3,pos,0,1
 pos,,15,pos,0,0,pos,10,pos,0,1
