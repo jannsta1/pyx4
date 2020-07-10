@@ -1,6 +1,13 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+""" ROS node to perform most of the testing logic.
+- Manage subscriptions to relevant topics
+- Parse all the data needed for testing
+- Do the testing
+- All the results are published to the /pyx4_test topic
+"""
+
 PKG = 'pyx4'
 NAME = 'pyx4_test'
 
@@ -17,25 +24,32 @@ from setpoint_bitmasks import *
 
 class Pyx4Test():
     def __init__(self, mission_file, comp_file):
-        self.success = False
+        # Position for each waypoint
         self.wpts = Pyx4Test._parse_comp_file(comp_file)
+        # Expected timeout, type and velocity for each waypoint
         (self.timeouts,
-         self.targets,
+         self.types,
          self.velocities) = Pyx4Test._parse_mission_file(mission_file)
+
         self.total_wpts = len(self.wpts) + 3
+        # Type masks for each waypoint
         self.type_masks = {}
+        # Start time of the current waypoint
         self.wpt_start_time = 0
+        # Index of the current waypoint
         self.current_wpt = 0
+        # List of velocities for the current waypoint
         self.cb_vels = np.empty((0,2), float)
+        # Current local position of the drone
         self.current_pos = []
-        self.target_sample_num = 0
-        self.atol, self.rtol = 0, 10
+
+        # Publisher for pyx4_test
         self.pyx4_test_pub = rospy.Publisher(NAME + '/pyx4_test',
                                              Pyx4_test_msg, queue_size=10)
-        
-        self.test_types = {'target': 'target',
-                           'wpt_position': 'wpt position',
-                           'velocity': 'average velocity',
+        # Test types
+        self.test_types = {'type': 'target_type',
+                           'wpt_position': 'wpt_position',
+                           'velocity': 'average_velocity',
                            'timeout': 'timeout'}
 
     @staticmethod
@@ -108,19 +122,26 @@ class Pyx4Test():
         """
         return self.current_wpt < self.total_wpts and self.current_wpt >= 3
     
-    def target_test(self):
+    def type_test(self):
+        """ Test to check whether the setpoint types.
+        Calls send_message to publish the result in the /pyx4_test topic.
+        """
         if self.perform_test_pred():
             # Get the type mask that has been published the most
             # for this waypoint
             type_mask = max(self.type_masks[self.current_wpt],
                             key=lambda x: self.type_masks[self.current_wpt][x])
-            passed = (self.targets[self.current_wpt] == type_mask)
+            passed = (self.types[self.current_wpt] == type_mask)
             
-            self.send_message(self.test_types['target'], passed,
-                              self.targets[self.current_wpt],
+            self.send_message(self.test_types['type'], passed,
+                              self.types[self.current_wpt],
                               type_mask)
 
     def wpt_position_test(self):
+        """ Test to check whether the position of the drone when it
+        reaches each waypoint is correct.
+        Calls send_message to publish the result in the /pyx4_test topic.
+        """
         if self.perform_test_pred():
             # Compare all elements of both arrays
             passed = np.allclose(self.wpts[self.current_wpt],
@@ -137,6 +158,11 @@ class Pyx4Test():
                               expected, given)
 
     def velocity_test(self, cb_vels):
+        """ Test to check whether the x and y velocity for setpoints
+        of type velocity is more or less constant and as specified.
+        Calls send_message to publish the result in the /pyx4_test topic.
+        :param cb_vels: a list of the velocities the drone has flown at.
+        """
         if (self.perform_test_pred() and
             self.velocities[self.current_wpt] is not None):
             cb_vels = cb_vels[35:-35]
@@ -146,6 +172,9 @@ class Pyx4Test():
                               True, passed)
 
     def timeout_test(self):
+        """ Test to check whether all the timeouts are being followed.
+        Calls send_message to publish the result in the /pyx4_test topic.
+        """
         if self.current_wpt < self.total_wpts and self.current_wpt >= 3:
             expected_to = self.timeouts[self.current_wpt]
             # If we have spent more time than timeout, with 10% margin
@@ -158,10 +187,18 @@ class Pyx4Test():
                           expected_to, given)
 
     def send_message(self, test_type, passed, expected, given):
+        """ Construnct a message personalised to each test type
+        and to whether the test has passed. Then publish the message
+        and log it to the console.
+        :param test_type (string): wpt_position, type...
+        :param passed (Bool): whether the test has passed
+        :param expected: an expected test result
+        :param given: the actual test result
+        """
         # Variables to generate the message
         passed_msg = ['FAILED', 'PASSED']
         expected_msg = {self.test_types['wpt_position']: 'to finish at',
-                        self.test_types['target']: 'type mask',
+                        self.test_types['type']: 'type mask',
                         self.test_types['velocity']: '',
                         self.test_types['timeout']: 'to finish in'}
         
@@ -188,10 +225,11 @@ class Pyx4Test():
         else: rospy.logerr(description)
 
     def pyx4_callback(self, data):
-        """ Compares the test data for the current waypoint to self.current_pos
-        :param data: pyx4_state message
+        """ Callback triggered every time the drone reaches a waypoint.
+        Calls all the test functions and updates the required attributes.
+        :param data: pyx4_state message from /pyx4_node/pyx4_state
         """
-        self.target_test()
+        self.type_test()
         self.wpt_position_test()
         self.velocity_test(self.cb_vels)
         self.timeout_test()
@@ -201,8 +239,9 @@ class Pyx4Test():
         self.current_wpt += 1
 
     def local_position_callback(self, data):
-        """ Gets the local position data from /mavros/local_position/pose and
-        updates the attribute current.
+        """ ROS subscription callback that updates the attribute
+        current_pos.
+        :param data: PoseStamped from /mavros/local_position/pose
         """
         # Update the current position 
         pos = data.pose.position
@@ -210,6 +249,11 @@ class Pyx4Test():
                                      data.pose.orientation.z])
             
     def position_target_callback(self, data):
+        """ ROS subscription callback that gets a target type and
+        adds it to a dictionary containing a counter of each type.
+        for each waypoint.
+        :param data: PositionTarget from /mavros/setpoint_raw/local
+        """
         tm = data.type_mask
         # If we have not seen the current waypoint yet,
         # add it to the data
@@ -222,6 +266,10 @@ class Pyx4Test():
             self.type_masks[self.current_wpt][tm] = 1
 
     def local_position_vel_callback(self, data):
+        """ ROS subscription callback that adds the current velocity to
+        an array of velocities.
+        :param data: TwistStamped from /mavros/local_position/velocity_local
+        """
         vel = data.twist.linear
         self.cb_vels = np.append(self.cb_vels, np.array([[vel.x, vel.y]]),
                                  axis=0)
@@ -229,7 +277,7 @@ class Pyx4Test():
     def main(self):
         """ Method to manage subscriptions:
         
-        - pyx4_state topic: to know when a waypoint is reached.
+        - /pyx4_node/pyx4_state: to know when a waypoint is reached.
           Callback: compare the local position in the test data for that
                     waypoint to the mavros/local_position data.
        
@@ -264,8 +312,6 @@ class Pyx4Test():
             time.sleep(0.1)
         
 if __name__ == '__main__':
-    #TODO Make a script to import the csv test filles in
-    #test_data and csv_mission_test
     import argparse
     parser = argparse.ArgumentParser(description="ROS test node")
     parser.add_argument('--mission', type=str, default='basic_test.csv')
@@ -284,5 +330,6 @@ if __name__ == '__main__':
         raise AttributeError("""file {} does not exist.
         Run test_data to create the test data for the selected mission.
         """.format(comp_file))
+    
     pyx4_test = Pyx4Test(mission_file, comp_file)
     pyx4_test.main()
