@@ -22,7 +22,7 @@ class Pyx4Test():
         (self.timeouts,
          self.targets,
          self.velocities) = Pyx4Test._parse_mission_file(mission_file)
-        self.total_wpts = len(self.wpts)
+        self.total_wpts = len(self.wpts) + 3
         self.type_masks = {}
         self.wpt_start_time = 0
         self.current_wpt = 0
@@ -47,7 +47,7 @@ class Pyx4Test():
         """
         with open(comp_file, 'r') as f:
             reader = csv.DictReader(f)
-            return {i: np.array(map(float, [dic['x'],
+            return {i+3: np.array(map(float, [dic['x'],
                                              dic['y'],
                                              dic['z'],
                                              dic['yaw']]))
@@ -102,8 +102,14 @@ class Pyx4Test():
                     
         return timeouts, targets, velocities
 
+    def perform_test_pred(self):
+        """ Function to see whether the tests should be performed.
+        :return Bool
+        """
+        return self.current_wpt < self.total_wpts and self.current_wpt >= 3
+    
     def target_test(self):
-        if (self.current_wpt < self.total_wpts and self.current_wpt >= 3):
+        if self.perform_test_pred():
             # Get the type mask that has been published the most
             # for this waypoint
             type_mask = max(self.type_masks[self.current_wpt],
@@ -115,26 +121,23 @@ class Pyx4Test():
                               type_mask)
 
     def wpt_position_test(self):
-        if self.current_wpt < self.total_wpts:
+        if self.perform_test_pred():
             # Compare all elements of both arrays
             passed = np.allclose(self.wpts[self.current_wpt],
                                  self.current_pos,
                                  rtol=2, atol=1)
         
-        # Too many waypoints and the test should fail
-        else:
-            passed = False
 
-        # Round to 2 decimal places for reporting.
-        expected = list(map(lambda x: round(x, 2),
-                            self.wpts[self.current_wpt]))
-        given = list(map(lambda x: round(x, 2), self.current_pos))
+            # Round to 2 decimal places for reporting.
+            expected = list(map(lambda x: round(x, 2),
+                                self.wpts[self.current_wpt]))
+            given = list(map(lambda x: round(x, 2), self.current_pos))
         
-        self.send_message(self.test_types['wpt_position'], passed,
-                          expected, given)
+            self.send_message(self.test_types['wpt_position'], passed,
+                              expected, given)
 
     def velocity_test(self, cb_vels):
-        if (self.current_wpt < self.total_wpts and self.current_wpt >= 3 and
+        if (self.perform_test_pred() and
             self.velocities[self.current_wpt] is not None):
             cb_vels = cb_vels[35:-35]
             passed = np.allclose(cb_vels, self.velocities[self.current_wpt],
@@ -192,7 +195,7 @@ class Pyx4Test():
         self.wpt_position_test()
         self.velocity_test(self.cb_vels)
         self.timeout_test()
-
+        
         self.wpt_start_time = time.time()
         self.cb_vels = np.empty((0,2), float)
         self.current_wpt += 1
