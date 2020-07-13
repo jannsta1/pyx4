@@ -27,6 +27,8 @@
         args="--mission $(arg mission) --comp $(arg comp)"
     />
 
-    <test test-name="pyx4_test" pkg="pyx4" type="pyx4_test.py" time-limit="120.0"/>
+    <test test-name="pyx4_test" pkg="pyx4" type="pyx4_test.py" time-limit="180.0"
+        args="$(arg mission)"
+    />
 
 </launch>

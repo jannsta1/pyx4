@@ -2,7 +2,7 @@
 from __future__ import print_function
 
 PKG = 'pyx4'
-NAME = 'test_csv_mission'
+NAME = 'pyx4_test'
 
 import sys 
 import time
@@ -15,29 +15,29 @@ import numpy as np
 import rospy
 import rostest
 import roslib.scriptutil as scriptutil
-from std_msgs.msg import String
 from pyx4.msg import pyx4_test as Pyx4_test_msg
 from definitions_pyx4 import TEST_COMP
 
 class TestPeerSubscribeListener(unittest.TestCase):
     def __init__(self, *args):
         super(TestPeerSubscribeListener, self).__init__(*args)
-        self.results = {'wpts_pos': [], 'basic_checks': []}
-        self.success = False
+        self.visited = []
+        self.results = []
         
     def callback(self, data):
-        self.results[data.test_type].append(data.passed)
+        self.results[data.test_type].append(data)
+        if data.waypoint not in self.visited:
+            self.visited.append(data.waypoint)
 
     def test_notify(self):
         rospy.Subscriber("pyx4_test/pyx4_test", Pyx4_test_msg, self.callback)
         rospy.init_node(NAME, anonymous=True)
         timeout_t = time.time() + 10.0*1000 #10 seconds
-        while not rospy.is_shutdown() and not self.success and time.time() < timeout_t:
+        while not rospy.is_shutdown() and time.time() < timeout_t:
             time.sleep(0.1)
 
-        for result in self.results['wpts_pos']:
-            self.assertTrue(result)
-            self.assertIs(len(self.results['wpts_pos']), 12)
+        for result in self.results:
+            self.assertTrue(data.passed, msg=data.description)
         
 if __name__ == '__main__':
     rostest.rosrun(PKG, NAME, TestPeerSubscribeListener, sys.argv)

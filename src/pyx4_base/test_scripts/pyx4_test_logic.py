@@ -18,8 +18,8 @@ from pyx4.msg import pyx4_state as Pyx4_msg
 from pyx4.msg import pyx4_test as Pyx4_test_msg
 from geometry_msgs.msg import PoseStamped, TwistStamped
 from mavros_msgs.msg import PositionTarget
-from definitions_pyx4 import TEST_COMP, MISSION_SPECS
-from setpoint_bitmasks import *
+from pyx4_base.definitions_pyx4 import TEST_COMP, MISSION_SPECS
+from pyx4_base.setpoint_bitmasks import *
 
 class Pyx4Test():
     """ Class to handle the main logic, subscribers and publishers
@@ -204,10 +204,11 @@ class Pyx4Test():
                         self.test_types['velocity']: '',
                         self.test_types['timeout']: 'to finish in'}
         
-        description = """{} TEST: {}
+        description = """Waypoint {}: {} TEST {}
         Waypoint {} {} the {} test.
         Expected {} {} and got {}
-        """.format(test_type.upper(),  # Test type
+        """.format(self.current_wpt,  # Current waypoint
+                   test_type.upper(),  # Test type
                    passed_msg[passed],  # FAILED / PASSED
                    self.current_wpt,  # Current wpt
                    passed_msg[passed],  # FAILED / PASSED
@@ -218,6 +219,7 @@ class Pyx4Test():
         # Create the Pyx4 test message and publish
         msg = Pyx4_test_msg()
         msg.test_type = test_type
+        msg.waypoint = str(self.current_wpt)
         msg.passed = passed
         msg.description = description
         self.pyx4_test_pub.publish(msg)

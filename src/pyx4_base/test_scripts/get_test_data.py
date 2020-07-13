@@ -5,7 +5,7 @@ import sys
 import os
 from pyx4.msg import pyx4_state as Pyx4_msg
 from geometry_msgs.msg import PoseStamped
-from definitions_pyx4 import TEST_COMP
+from pyx4_base.definitions_pyx4 import TEST_COMP
 
 """
 ROS node to get the data to do the comparisons for the testing.
