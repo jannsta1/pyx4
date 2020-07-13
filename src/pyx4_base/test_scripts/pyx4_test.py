@@ -12,7 +12,6 @@ import csv
 
 import rospy
 import rostest
-import roslib.scriptutil as scriptutil
 from pyx4.msg import pyx4_test as Pyx4_test_msg
 from pyx4_base.definitions_pyx4 import MISSION_SPECS
 
@@ -28,10 +27,11 @@ class Pyx4Test(unittest.TestCase):
         when the mission is completed.
         :param data: pyx4_test message
         """
-        self.results[data.test_type].append(data)
+        self.results.append(data)
         # If the waypoint is new, add it to the visited list
         if data.waypoint not in self.visited:
             self.visited.append(data.waypoint)
+        
 
     def test_main(self):
         """ Main testing function. Called automatically by unittest.
@@ -63,7 +63,8 @@ if __name__ == '__main__':
         reader = csv.DictReader(f)
         # Get a list with all the rows
         wpt_list = [int(dic['timeout']) for dic in reader]
-        TOTAL_WAYPOINTS = len(wpt_list)  # Nummber of rows
+        # Nummber of rows - last one
+        TOTAL_WAYPOINTS = len(wpt_list) - 1
         # Current time + 110% of mission time
         TIMEOUT = (sum(wpt_list)) * 1.1 + time.time()
         
