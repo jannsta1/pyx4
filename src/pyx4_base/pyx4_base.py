@@ -95,7 +95,6 @@ class Pyx4_base(object):
             self.sp_pub_thread.start()
             rospy.loginfo('sp pub initialised')
 
-
     def publish_pyx4_state(self):
 
         self.pyx4_state_msg.header.stamp = rospy.Time.now()
@@ -155,16 +154,16 @@ if __name__ == '__main__':
     parser.add_argument('--state_estimation', type=int, default=0)
 
 
-    args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])
-
-
+    args = parser.parse_args(rospy.myargv(argv=sys.argv)[1:])    
+    
 
     # flight_instructions = {0: Take_off_state()}
 
     # mission_file = os.path.join(MISSION_SPECS, 'big_square.csv')
     # flight_instructions = Wpts_from_csv(file_path=mission_file)
 
-
+    
+    
     pyx4 = Pyx4_base(flight_instructions=flight_instructions,
                      enforce_height_mode_flag=args.enforce_hgt_mode_flag,
                      height_mode_req=args.height_mode_req,

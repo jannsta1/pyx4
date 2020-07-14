@@ -1,0 +1,9 @@
+label,x,y,z,yaw
+waypoint_3,10,0,3,0
+waypoint_4,10,10,3,0
+waypoint_5,0,0,10,0
+waypoint_6,10,0,10,0
+waypoint_7,10,10,10,0
+waypoint_8,-14,-14,5,0
+waypoint_9,-14,-14,5,0
+waypoint_10,6,6,8,-0.5
