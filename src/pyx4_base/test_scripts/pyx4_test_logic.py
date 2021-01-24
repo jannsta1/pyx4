@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 """ ROS node to perform most of the testing logic.
@@ -18,8 +18,8 @@ from pyx4.msg import pyx4_state as Pyx4_msg
 from pyx4.msg import pyx4_test as Pyx4_test_msg
 from geometry_msgs.msg import PoseStamped, TwistStamped
 from mavros_msgs.msg import PositionTarget
-from pyx4_base.definitions_pyx4 import TEST_COMP, MISSION_SPECS
-from pyx4_base.setpoint_bitmasks import *
+from pyx4_base_classes.definitions_pyx4 import TEST_COMP, MISSION_SPECS
+from pyx4_base_classes.setpoint_bitmasks import *
 
 class Pyx4Test():
     """ Class to handle the main logic, subscribers and publishers

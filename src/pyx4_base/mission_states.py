@@ -1,12 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """
 This file contains commonly used mission states that that can be loaded into a mission by the commander.
 
 All mission states should inherit from the 'Generic_mission_state'
 
 """
-
-
 
 from copy import copy
 import numpy as np
@@ -17,9 +15,9 @@ from mavros_msgs.msg import PositionTarget
 from mavros_msgs.msg import ExtendedState
 from sensor_msgs.msg import NavSatFix
 
-from .definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
-from .setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
-from .utils import get_bitmask
+from setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
+from definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
+from utils import get_bitmask
 
 
 class Generic_mission_state(object):

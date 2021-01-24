@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from transitions import Machine
 from time import sleep
 from random import choice

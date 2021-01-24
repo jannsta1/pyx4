@@ -1,4 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+
 """
 This module continuously provides mavros with a setpoint at the required rate so that onboard computer doesn't loose
 sync with the flight control unit

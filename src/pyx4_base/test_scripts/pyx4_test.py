@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 
 PKG = 'pyx4'
@@ -13,7 +13,7 @@ import csv
 import rospy
 import rostest
 from pyx4.msg import pyx4_test as Pyx4_test_msg
-from pyx4_base.definitions_pyx4 import MISSION_SPECS
+from pyx4_base_classes.definitions_pyx4 import MISSION_SPECS
 
 class Pyx4Test(unittest.TestCase):
     def __init__(self, *args):

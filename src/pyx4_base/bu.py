@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys, unittest, time, os, csv
 import rospy, rostest
 import numpy as np
 from pyx4.msg import pyx4_state as Pyx4_msg
-from .definitions_pyx4 import TEST_COMP
+from definitions_pyx4 import TEST_COMP
 
 class TestCSVMission(unittest.TestCase):
     

@@ -1,13 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import csv
-import numpy as np
-import ast
-import argparse
 import os
 
-from .mission_states import *
-from .definitions_pyx4 import MISSION_SPECS
+from definitions_pyx4 import MISSION_SPECS
+from mission_states import *
 
 
 def Wpts_from_csv(file_path):

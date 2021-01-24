@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 This file converts waypoints_local.py into a rosnode and instantiates a Pyx4_base mission with this data.
@@ -11,9 +11,9 @@ import argparse
 import os, sys
 import rospy
 
-from .generate_mission import Wpts_from_csv
-from .definitions_pyx4 import MISSION_SPECS
-from .pyx4_base import Pyx4_base
+from generate_mission import Wpts_from_csv
+from definitions_pyx4 import MISSION_SPECS
+from pyx4_base_classes import Pyx4_base
 
 
 if __name__ == '__main__':

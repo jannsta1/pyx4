@@ -1,7 +1,8 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+
 import numpy as np
 
-from .setpoint_bitmasks import *
+from setpoint_bitmasks import *
 from tf.transformations import euler_from_quaternion
 
 def pose2yaw(this_pose):

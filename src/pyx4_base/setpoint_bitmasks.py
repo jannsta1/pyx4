@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 """
 This module defines the setpoint bitmasks that are used for use with the setpoint_raw mavros message

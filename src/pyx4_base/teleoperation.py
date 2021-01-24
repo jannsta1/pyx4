@@ -1,15 +1,10 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import argparse
-import os, sys
-import rospy
-import numpy as np
 
-from .generate_mission import Wpts_from_csv
-from .definitions_pyx4 import MISSION_SPECS
-from .setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
-from .mission_states import *
-from .pyx4_base import Pyx4_base
+from setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
+from mission_states import *
+from pyx4_base_classes import Pyx4_base
 from geometry_msgs.msg import Twist
 
 class Teleop_state(Generic_mission_state):

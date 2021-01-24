@@ -1,14 +1,7 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
-
-
-import csv
-import numpy as np
-import ast
-import argparse
-
-from .mission_states import *
-from src.src.pyx4 import Pyx4_base
+from pyx4_base_classes import Pyx4_base
+from mission_states import *
 from mavros_msgs.msg import PositionTarget
 
 from warnings import warn

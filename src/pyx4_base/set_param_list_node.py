@@ -1,4 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+
 """
 This module is used to set a list of PX4 parameters
 
@@ -7,9 +8,9 @@ This module is used to set a list of PX4 parameters
 
 from mavros_msgs.msg import ParamValue
 
-from cx_model_px4.argparse_cx import *
-from .mavros_interface import *
-from .definitions_pyx4 import *
+from mavros_interface import *
+from definitions_pyx4 import *
+# from cx_model_px4.argparse_cx import *
 
 
 class Px4_param_setter(object):
