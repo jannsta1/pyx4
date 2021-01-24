@@ -7,7 +7,7 @@
 # @author Jan Stankiewicz
 #
 
-from __future__ import division
+
 
 import numpy as np
 from threading import Thread, Lock
@@ -22,9 +22,9 @@ from sensor_msgs.msg import NavSatFix, Range
 from std_msgs.msg import Float64, Float32
 from tf.transformations import euler_from_quaternion
 
-from definitions_pyx4 import *
+from .definitions_pyx4 import *
 
-from definitions_pyx4 import MAV_VTOL_STATE, LANDED_STATE, MAV_STATE
+from .definitions_pyx4 import MAV_VTOL_STATE, LANDED_STATE, MAV_STATE
 
 
 class Mavros_interface(object):

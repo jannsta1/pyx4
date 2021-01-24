@@ -6,7 +6,7 @@ All mission states should inherit from the 'Generic_mission_state'
 
 """
 
-from __future__ import division
+
 
 from copy import copy
 import numpy as np
@@ -17,9 +17,9 @@ from mavros_msgs.msg import PositionTarget
 from mavros_msgs.msg import ExtendedState
 from sensor_msgs.msg import NavSatFix
 
-from definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
-from setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
-from utils import get_bitmask
+from .definitions_pyx4 import VALID_WAYPOINT_TYPES, TAKE_OFF_PHASE
+from .setpoint_bitmasks import MASK_XY_POS__Z_POS_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_POS, MASK_XY_VEL__Z_VEL_YAW_RATE
+from .utils import get_bitmask
 
 
 class Generic_mission_state(object):
@@ -266,8 +266,8 @@ class Waypoint_state(Generic_mission_state):
         # self.tol_heading_deg = tol_heading_deg
         self.coordinate_frame = coordinate_frame
         self.wpt_typemask = get_bitmask(self.xy_type, self.z_type, self.yaw_type)
-        print ('generate bitmask {} for waypoint type {} with xy_typ: {} z_type {} and yaw type: {}'
-               .format(self.wpt_typemask, waypoint_type, xy_type, z_type, yaw_type))
+        print(('generate bitmask {} for waypoint type {} with xy_typ: {} z_type {} and yaw type: {}'
+               .format(self.wpt_typemask, waypoint_type, xy_type, z_type, yaw_type)))
         self.update_status_rate = update_status_rate
 
         super(Waypoint_state, self).__init__(

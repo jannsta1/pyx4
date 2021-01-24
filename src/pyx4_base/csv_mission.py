@@ -11,9 +11,9 @@ import argparse
 import os, sys
 import rospy
 
-from generate_mission import Wpts_from_csv
-from definitions_pyx4 import MISSION_SPECS
-from pyx4_base import Pyx4_base
+from .generate_mission import Wpts_from_csv
+from .definitions_pyx4 import MISSION_SPECS
+from .pyx4_base import Pyx4_base
 
 
 if __name__ == '__main__':
@@ -31,7 +31,7 @@ if __name__ == '__main__':
         mission_file = os.path.join(MISSION_SPECS, args.csv)
 
     if os.path.isfile(mission_file):
-        print ('running mission from csv file {}'.format(mission_file))
+        print(('running mission from csv file {}'.format(mission_file)))
     else:
         raise AttributeError('File {} not found'.format(mission_file))
 

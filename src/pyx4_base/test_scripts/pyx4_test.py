@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 PKG = 'pyx4'
 NAME = 'pyx4_test'

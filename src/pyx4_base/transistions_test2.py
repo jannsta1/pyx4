@@ -40,7 +40,7 @@ class Passport_cam(object):
 
     def run(self):
         while self.running:
-            print('At state ' + self.model.state)
+            print(('At state ' + self.model.state))
             #while not self.model.check():
             self.model.check()
 

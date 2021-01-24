@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 PKG = 'pyx4'
 NAME = 'pyx4_test'
@@ -16,7 +16,7 @@ import rospy
 import rostest
 import roslib.scriptutil as scriptutil
 from pyx4.msg import pyx4_test as Pyx4_test_msg
-from definitions_pyx4 import TEST_COMP
+from .definitions_pyx4 import TEST_COMP
 
 class TestPeerSubscribeListener(unittest.TestCase):
     def __init__(self, *args):

@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
 
-from __future__ import division
 
-from setpoint_publisher import *
-from mavros_interface import *
-from definitions_pyx4 import *
-from mission_states import *
+
+from .setpoint_publisher import *
+from .mavros_interface import *
+from .definitions_pyx4 import *
+from .mission_states import *
 from threading import Thread
-from commander import *
+from .commander import *
 
 from pyx4.msg import pyx4_state as Pyx4_msg
 

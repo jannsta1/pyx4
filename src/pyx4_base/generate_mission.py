@@ -6,8 +6,8 @@ import ast
 import argparse
 import os
 
-from mission_states import *
-from definitions_pyx4 import MISSION_SPECS
+from .mission_states import *
+from .definitions_pyx4 import MISSION_SPECS
 
 
 def Wpts_from_csv(file_path):

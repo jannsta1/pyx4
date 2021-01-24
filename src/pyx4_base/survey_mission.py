@@ -1,13 +1,13 @@
 #!/usr/bin/env python2
 
-from __future__ import division
+
 
 import csv
 import numpy as np
 import ast
 import argparse
 
-from mission_states import *
+from .mission_states import *
 from src.src.pyx4 import Pyx4_base
 from mavros_msgs.msg import PositionTarget
 
@@ -84,7 +84,7 @@ def  Survey_mission(
 
     ################################### main loop
     for x_tgt, y_tgt in zip(xs_all, ys_all):
-        print ('generating waypoint at {}, {} '.format(x_tgt, y_tgt))
+        print(('generating waypoint at {}, {} '.format(x_tgt, y_tgt)))
         instructions[instruction_cnt] = Waypoint_state(
             timeout=duration,
             state_label='Going out',
@@ -123,8 +123,8 @@ def  Survey_mission(
     instructions[instruction_cnt] = Landing_state()
     instruction_cnt += 1
 
-    print xs_all
-    print ys_all
+    print(xs_all)
+    print(ys_all)
 
     return instructions
     # translate gid points based on the offset

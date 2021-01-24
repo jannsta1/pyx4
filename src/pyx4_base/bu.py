@@ -3,7 +3,7 @@ import sys, unittest, time, os, csv
 import rospy, rostest
 import numpy as np
 from pyx4.msg import pyx4_state as Pyx4_msg
-from definitions_pyx4 import TEST_COMP
+from .definitions_pyx4 import TEST_COMP
 
 class TestCSVMission(unittest.TestCase):
     
@@ -25,7 +25,7 @@ class TestCSVMission(unittest.TestCase):
         """
         with open(comp_file, 'r') as f:
             reader = csv.DictReader(f)
-            return {i: np.array([v for k, v in dic.iteritems()
+            return {i: np.array([v for k, v in dic.items()
                                  if k in ['x', 'y', 'z', 'yaw']])
                     for i, dic in enumerate(reader)}
     
@@ -69,7 +69,7 @@ if __name__ == '__main__':
         raise AttributeError("""file {} does not exist.
         Run test_data to create the test data for the selected mission.
         """.format(comp_file, mission_file))
-    print comp_file
+    print(comp_file)
     rostest.rosrun('pyx4', 'csv_mission_test', TestCSVMission)
 
 

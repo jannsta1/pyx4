@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from __future__ import print_function
+
 
 """ ROS node to perform most of the testing logic.
 - Manage subscriptions to relevant topics
@@ -63,10 +63,10 @@ class Pyx4Test():
         """
         with open(comp_file, 'r') as f:
             reader = csv.DictReader(f)
-            return {i+3: np.array(map(float, [dic['x'],
+            return {i+3: np.array(list(map(float, [dic['x'],
                                              dic['y'],
                                              dic['z'],
-                                             dic['yaw']]))
+                                             dic['yaw']])))
                     for i, dic in enumerate(reader)}
 
     @staticmethod
@@ -152,9 +152,8 @@ class Pyx4Test():
         
 
             # Round to 2 decimal places for reporting.
-            expected = list(map(lambda x: round(x, 2),
-                                self.wpts[self.current_wpt]))
-            given = list(map(lambda x: round(x, 2), self.current_pos))
+            expected = list([round(x, 2) for x in self.wpts[self.current_wpt]])
+            given = list([round(x, 2) for x in self.current_pos])
         
             self.send_message(self.test_types['wpt_position'], passed,
                               expected, given)
@@ -261,10 +260,10 @@ class Pyx4Test():
         tm = data.type_mask
         # If we have not seen the current waypoint yet,
         # add it to the data
-        if self.current_wpt not in self.type_masks.keys():
+        if self.current_wpt not in list(self.type_masks.keys()):
             self.type_masks[self.current_wpt] = {}
         
-        if tm in self.type_masks[self.current_wpt].keys():
+        if tm in list(self.type_masks[self.current_wpt].keys()):
             self.type_masks[self.current_wpt][tm] += 1
         else:
             self.type_masks[self.current_wpt][tm] = 1

@@ -3,13 +3,13 @@
 This module is used to set a list of PX4 parameters
 
 """
-from __future__ import division
+
 
 from mavros_msgs.msg import ParamValue
 
 from cx_model_px4.argparse_cx import *
-from mavros_interface import *
-from definitions_pyx4 import *
+from .mavros_interface import *
+from .definitions_pyx4 import *
 
 
 class Px4_param_setter(object):
@@ -66,13 +66,13 @@ class Px4_param_setter(object):
 
             # first check which items need to be changed
             self.incorrect_params_dict = {}
-            for param, val in self.params_dict.iteritems():
+            for param, val in self.params_dict.items():
                 # rospy.loginfo((param, val))
 
                 param_read_attempts = 0
                 while param_read_attempts < 5:
                     res = self.mavros_interface.get_param_srv(param)
-                    print res
+                    print(res)
                     if res.success:
                         # todo - if res == false then: try again? or just add to list
                         eeprom_val = res.value.integer
@@ -94,7 +94,7 @@ class Px4_param_setter(object):
                 rospy.loginfo('All params correct - finishing up')
                 break
             else:
-                for param, val in self.incorrect_params_dict.iteritems():
+                for param, val in self.incorrect_params_dict.items():
                     rospy.loginfo(('attempting to change {} to {}'.format(param, val.integer)))
 
                     param_write_attempts = 0

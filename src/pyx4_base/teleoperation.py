@@ -5,11 +5,11 @@ import os, sys
 import rospy
 import numpy as np
 
-from generate_mission import Wpts_from_csv
-from definitions_pyx4 import MISSION_SPECS
-from setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
-from mission_states import *
-from pyx4_base import Pyx4_base
+from .generate_mission import Wpts_from_csv
+from .definitions_pyx4 import MISSION_SPECS
+from .setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
+from .mission_states import *
+from .pyx4_base import Pyx4_base
 from geometry_msgs.msg import Twist
 
 class Teleop_state(Generic_mission_state):
@@ -110,7 +110,7 @@ def generate_telop_mission(args):
     instructions[instruction_cnt] = Take_off_state()
     instruction_cnt += 1
 
-    print('args', args)
+    print(('args', args))
     instructions[instruction_cnt] = Teleop_state(timeout=args.timeout,
                                                  max_linear_speed=args.linear,
                                                  max_angular_speed=args.angular,
@@ -127,7 +127,7 @@ def generate_telop_mission(args):
 if __name__ == '__main__':
 
     node_name = 'teleop_mission'
-    print sys.argv[1:]
+    print(sys.argv[1:])
     rospy.init_node(node_name, anonymous=True, log_level=rospy.DEBUG)
     parser = argparse.ArgumentParser(description="Teleoperation px4 quadcopter.")
     # This is obtained from the launch file.

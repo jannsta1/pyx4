@@ -41,7 +41,7 @@ class Passport_cam(object):
 
             self.machine.face_ok = self.face_ok()
             self.machine.height_ok = self.height_ok()
-            print ('At state ' + self.model.state) #, ' camera height (', self.error_z ,') ok is ', self.machine.height_ok, ' face check is ', self.machine.face_ok)
+            print(('At state ' + self.model.state)) #, ' camera height (', self.error_z ,') ok is ', self.machine.height_ok, ' face check is ', self.machine.face_ok)
             # todo - poll latest state here? (self.model.state)
             self.camera_dynamics()
             sleep(1)
@@ -71,7 +71,7 @@ class Passport_cam(object):
         self.error_z = self.camera_pos_z - self.face_pos_z
         threshold_error = (min(max(self.error_z, -max_displacement), max_displacement))
         self.camera_pos_z = self.camera_pos_z - threshold_error
-        print ('Camera height error is: {0}'.format(self.error_z))
+        print(('Camera height error is: {0}'.format(self.error_z)))
 
     def main_timeout(self):
         if time() > self.init_time + self.terminate_time_s:
