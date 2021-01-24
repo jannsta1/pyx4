@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from setpoint_publisher import *
-from mavros_interface import *
-from definitions_pyx4 import *
-from mission_states import *
-from commander import *
+from pyx4_base.setpoint_publisher import *
+from pyx4_base.mavros_interface import *
+from pyx4_base.definitions_pyx4 import *
+from pyx4_base.mission_states import *
+from pyx4_base.commander import *
 
 from pyx4.msg import pyx4_state as Pyx4_msg
 

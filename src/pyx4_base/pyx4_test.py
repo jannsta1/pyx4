@@ -14,7 +14,7 @@ import rospy
 import rostest
 import roslib.scriptutil as scriptutil
 from pyx4.msg import pyx4_test as Pyx4_test_msg
-from definitions_pyx4 import TEST_COMP
+from pyx4_base.definitions_pyx4 import TEST_COMP
 
 class TestPeerSubscribeListener(unittest.TestCase):
     def __init__(self, *args):

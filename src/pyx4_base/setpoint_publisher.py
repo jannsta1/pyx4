@@ -5,7 +5,6 @@ This module continuously provides mavros with a setpoint at the required rate so
 sync with the flight control unit
 """
 
-
 import rospy
 
 def setpoint_publisher(mavros_interface_node, commander_class_instance, ros_rate=100):

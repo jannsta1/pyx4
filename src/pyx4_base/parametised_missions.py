@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 
-from mission_states import *
-from pyx4_base_classes import Pyx4_base
+from pyx4_base.mission_states import *
+from pyx4_base.pyx4_base_classes import Pyx4_base
 
 
 VALID_MISSIONS = ['hover', 'baggins', 'ortho', 'holo']

@@ -9,8 +9,6 @@ MISSION_SPECS = os.path.join(DATA_DIR, 'mission_specs')
 
 EXAMPLE_MISSION = os.path.join(MISSION_SPECS, 'basic_wpts.csv')
 
-
-
 VALID_WAYPOINT_TYPES = ['hold', 'pos', 'pos_with_vel', 'vel_xy', 'vel']
 
 class Hardware(Enum):

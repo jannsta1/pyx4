@@ -8,9 +8,8 @@ This module is used to set a list of PX4 parameters
 
 from mavros_msgs.msg import ParamValue
 
-from mavros_interface import *
-from definitions_pyx4 import *
-# from cx_model_px4.argparse_cx import *
+from pyx4_base.mavros_interface import *
+from pyx4_base.definitions_pyx4 import *
 
 
 class Px4_param_setter(object):

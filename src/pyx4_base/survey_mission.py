@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-from pyx4_base_classes import Pyx4_base
-from mission_states import *
 from mavros_msgs.msg import PositionTarget
+
+from pyx4_base.pyx4_base_classes import Pyx4_base
+from pyx4_base.mission_states import *
 
 from warnings import warn
 

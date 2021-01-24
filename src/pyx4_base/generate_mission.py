@@ -3,8 +3,8 @@
 import csv
 import os
 
-from definitions_pyx4 import MISSION_SPECS
-from mission_states import *
+from pyx4_base.definitions_pyx4 import MISSION_SPECS
+from pyx4_base.mission_states import *
 
 
 def Wpts_from_csv(file_path):

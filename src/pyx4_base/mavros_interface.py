@@ -13,7 +13,7 @@ from sensor_msgs.msg import NavSatFix, Range
 from std_msgs.msg import Float64, Float32
 from tf.transformations import euler_from_quaternion
 
-from definitions_pyx4 import *
+from pyx4_base.definitions_pyx4 import *
 
 from definitions_pyx4 import MAV_VTOL_STATE, LANDED_STATE, MAV_STATE
 

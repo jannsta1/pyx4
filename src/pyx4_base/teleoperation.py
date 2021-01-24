@@ -2,9 +2,9 @@
 
 import argparse
 
-from setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
-from mission_states import *
-from pyx4_base_classes import Pyx4_base
+from pyx4_base.setpoint_bitmasks import MASK_XY_VEL__Z_POS__YAW_RATE
+from pyx4_base.mission_states import *
+from pyx4_base.pyx4_base_classes import Pyx4_base
 from geometry_msgs.msg import Twist
 
 class Teleop_state(Generic_mission_state):
