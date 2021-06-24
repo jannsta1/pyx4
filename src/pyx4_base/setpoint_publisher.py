@@ -18,6 +18,8 @@ def setpoint_publisher(mavros_interface_node, commander_class_instance, ros_rate
         try:
 
             # todo - add this thread lock to mission_states
+            # todo - use commander lock rather than mission states lock?
+            # with mavros_interface_node.setpoint_lock:
             mavros_interface_node.setpoint_lock.acquire()
             mavros_interface_node.local_pos_pub_raw.publish(commander_class_instance.sp_raw)
             mavros_interface_node.setpoint_lock.release()

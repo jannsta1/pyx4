@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 
 from pyx4_base.setpoint_publisher import *
 from pyx4_base.mavros_interface import *
@@ -103,6 +104,7 @@ class Pyx4_base(object):
         handy if other preconditions need to be waited for before starting the mission
 
         """
+        # todo - check that take off hasn't already happened
         self.commander_thread.start()
         rospy.loginfo('commander initialised')
         self.sp_pub_thread.start()

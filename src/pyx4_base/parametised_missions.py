@@ -5,7 +5,7 @@ from pyx4_base.mission_states import *
 from pyx4_base.pyx4_base_classes import Pyx4_base
 
 
-VALID_MISSIONS = ['hover', 'baggins', 'ortho', 'holo']
+VALID_MISSIONS = ['hover', 'baggins', 'ortho', 'holo', 'metronome']
 VALID_CONTROL_TYPES = ['vel', 'pos']
 
 """
@@ -333,6 +333,52 @@ def Parametised_mission(
         instruction_cnt = instruction_cnt + 1
 
 
+    ######################################################################################################
+    ######################## Metronome (swing side to side - useful for gimbal tune) ##################################
+    elif mission_type == 'metronome':   # (there and back again)
+
+        # there
+        instructions[instruction_cnt] = Waypoint_state(
+            timeout=duration,
+            state_label='Going up',
+            waypoint_type=control_type,
+            xy_type=control_type,
+            x_setpoint=x_tgt,
+            y_setpoint=0,
+            z_type='pos',
+            z_setpoint=height,
+            yaw_type='pos',
+            yaw_setpoint=heading,
+            coordinate_frame=PositionTarget.FRAME_LOCAL_NED,
+        )
+        instruction_cnt = instruction_cnt + 1
+
+        if y_tgt == 0:
+            y_tgt = 1
+
+        for idx in range(10):
+
+            if (idx % 2) == 0:
+                this_y = y_tgt
+            else:
+                this_y = -y_tgt
+                # and back again
+            instructions[instruction_cnt] = Waypoint_state(
+                timeout=duration,
+                state_label='Coming back',
+                waypoint_type=control_type,
+                xy_type=control_type,
+                x_setpoint=0,
+                y_setpoint=this_y,
+                z_type='pos',
+                z_setpoint=height,
+                yaw_type='pos',
+                yaw_setpoint=heading,
+                coordinate_frame=PositionTarget.FRAME_LOCAL_NED,
+            )
+            instruction_cnt = instruction_cnt + 1
+
+
 
     ######################################################################################################
     ################################## Landing instruction ###############################################
@@ -340,6 +386,8 @@ def Parametised_mission(
     instruction_cnt += 1
 
     return instructions
+
+
 
 def is_valid_option(parser, arg, checklist):
     """

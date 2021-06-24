@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
+from threading import Lock
 from copy import copy
 import rospy
 import sys
+
+from mavros_msgs.msg import PositionTarget
 
 class Commander(object):
     """
@@ -35,6 +38,8 @@ class Commander(object):
         self.mission_fail_state = False
         self._flight_instructions = flight_instructions
 
+        # self.update_setpoint_lock = Lock()
+
         # self.validate_flight_instructions()
         self._mission_idx = 0
 
@@ -51,7 +56,25 @@ class Commander(object):
         Returns the current raw setpoint value
         :return:
         """
+        # with self.update_setpoint_lock:
         return self._flight_instruction.sp_raw
+
+    @sp_raw.setter
+    def sp_raw(self, data):
+        """
+        It is possible to set the sp_raw property of a flight instruction class, this is mainly intended for use with
+        the PassthroughState
+        :param data:
+        :return:
+        """
+        # assert isinstance(PositionTarget), 'fail'
+        # with self.update_setpoint_lock:
+            # rospy.loginfo_throttle(5, data)
+        # print ('commander setpoint raw')
+        self._flight_instruction.sp_raw = data
+        # self._flight_instruction._setpoint_raw = data
+        # self._flight_instruction.update_sp_locals()
+        # print (data.position.z)
 
 
     @property
@@ -129,7 +152,6 @@ class Commander(object):
 
         rate = rospy.Rate(self._ros_rate)
 
-
         while not rospy.is_shutdown() and self._node_alive:
 
             # check if we need to increment our mission:
@@ -144,7 +166,7 @@ class Commander(object):
 
                     # rospy.logwarn_throttle(1, ('commander heartbeat. In state {} which is mission idx {}'.format(self._flight_instruction.flight_instruction_type, self.mission_idx)))
                     # if self.mission_idx > self.mission_idx_previous:
-                    if self._flight_instruction.stay_alive == False:
+                    if not self._flight_instruction.stay_alive:
                         self.load_flight_instruction(increment_mission=True)
 
                     # if time out then increment mission
@@ -177,7 +199,7 @@ class Commander(object):
                         self._flight_instruction.step()
                     else:
                         if self._flight_instruction._prerun_complete:
-                            rospy.loginfo('running precondition_check ')
+                            rospy.loginfo('running precondition_check for {}'.format(self._flight_instruction.flight_instruction_type))
                             self._flight_instruction.precondition_check()
                         else:
                             rospy.logerr('prerun not completeted for {}'.format(self._flight_instruction.flight_instruction_type))
@@ -195,6 +217,9 @@ class Commander(object):
                 rospy.logerr('mission fail state reported - exit offboard mode')
                 # todo - might be better to try and send zero setpoints in this state
                 self.shut_node_down()
+
+            # todo - make this optinally sporadic/periodic
+            self.commander_parent_ref.publish_pyx4_state()
 
         self.shut_node_down()
 

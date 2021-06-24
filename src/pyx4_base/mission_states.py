@@ -128,6 +128,10 @@ class Generic_mission_state(object):
 
     @property
     def sp_raw(self):
+        """
+        Returns internal setpoint_raw state and adds the current time in the timestamp
+        :return:
+        """
         self._setpoint_raw.position.x = self.x
         self._setpoint_raw.position.y = self.y
         self._setpoint_raw.position.z = self.z
@@ -143,6 +147,20 @@ class Generic_mission_state(object):
 
         return self._setpoint_raw
 
+    @sp_raw.setter
+    def sp_raw(self, new_setpoint):
+        # print ('Flight state sp raw')
+        # print (new_setpoint)
+        self.x = new_setpoint.position.x
+        self.y = new_setpoint.position.y
+        self.z = new_setpoint.position.z
+        self.x_vel = new_setpoint.velocity.x
+        self.y_vel = new_setpoint.velocity.y
+        self.z_vel = new_setpoint.velocity.z
+        self.yaw = new_setpoint.yaw
+        self.yaw_rate = new_setpoint.yaw_rate
+        self.coordinate_frame = new_setpoint.coordinate_frame
+        self.type_mask = new_setpoint.type_mask   # 1027
 
     @staticmethod
     def heading_error_rad(x, y):
@@ -853,24 +871,33 @@ class Post_run_state(Generic_mission_state):
 
         if self._prerun_complete:
             # If we are armed and landed
-            if (not self._ros_message_node.state.armed) and \
-                    ( self._ros_message_node.extended_state.landed_state == ExtendedState.LANDED_STATE_ON_GROUND):
-                rospy.logwarn('on ground and disarmed - shutting ros down now')
-
-                self.ros_shutdown_timer = rospy.Timer(rospy.Duration(5), self.ros_shutdown_timer_cb, oneshot=True)
-                self.preconditions_satisfied = True
+            # if (not self._ros_message_node.state.armed) and \
+            #         ( self._ros_message_node.extended_state.landed_state == ExtendedState.LANDED_STATE_ON_GROUND):
+            #     rospy.logwarn('on ground and disarmed - shutting ros down now')
+            #
+            #     self.ros_shutdown_timer = rospy.Timer(rospy.Duration(5), self.ros_shutdown_timer_cb, oneshot=True)
+            self.preconditions_satisfied = True
 
 
     def ros_shutdown_timer_cb(self, timer_event):
         self.ready_to_shutdown = True
 
-
     def step(self):
 
         rospy.logwarn_throttle(3, 'Mission complete - waiting for termination')
+
+        # todo - set downward velocity to try and cause landing in case still airborne?
+        self.x_vel = 0.0
+        self.y_vel = 0.0
+        self.z_vel = -1.0
+        self.yaw = self.heading_tgt_rad  # self.heading_tgt_rad
+        self.coordinate_frame = PositionTarget.FRAME_LOCAL_NED
+        self.type_mask = MASK_XY_VEL__Z_VEL_YAW_POS  # since MASK_XY_POS__Z_VEL_YAW_POS doesn't seem to work
 
         if self.ready_to_shutdown:
             rospy.logwarn_throttle(3, 'Shutting down conditions met - killing ROS now')
             self.stay_alive = False
             rospy.signal_shutdown("killing from {} state ".format(self.flight_instruction_type))
             sys.exit(0)
+
+        self._parent_ref.node_alive = False
