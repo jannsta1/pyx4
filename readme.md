@@ -11,7 +11,7 @@ It is intended for use with projects that make use of a companion computer. Some
 # Installation (for Ubuntu OS)
 ## Install Dependencies
 
-1. Install ROS Melodic (desktop full version): [http://wiki.ros.org/melodic/Installation](http://wiki.ros.org/melodic/Installation)
+1. Install ROS Melodic (desktop full version): [https://wiki.ros.org/noetic](https://wiki.ros.org/noetic)
 2. Install the PX4 Firmware: [https://dev.px4.io/master/en/setup/dev_env_linux_ubuntu.html#sim_nuttx](https://dev.px4.io/master/en/setup/dev_env_linux_ubuntu.html#sim_nuttx)
 3. Build the PX4 Firmware: [https://dev.px4.io/v1.9.0/en/simulation/ros_interface.html#launching-gazebo-with-ros-wrappers](https://dev.px4.io/v1.9.0/en/simulation/ros_interface.html#launching-gazebo-with-ros-wrappers)
 4. Install catkin tools: [https://catkin-tools.readthedocs.io/en/latest/installing.html#installing-on-ubuntu-with-apt-get](https://catkin-tools.readthedocs.io/en/latest/installing.html#installing-on-ubuntu-with-apt-get)
